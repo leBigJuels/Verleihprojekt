@@ -73,7 +73,18 @@
 
                 <form id="item-form" class="admin-item-form">
                     <label for="item-category">Kategorie</label>
-                    <input id="item-category" type="text" required>
+                    <select id="item-category">
+                        <option value="" selected>Keine Auswahl – Sonstigzeug</option>
+                        <option value="Werkzeug-Maschine">Werkzeug-Maschine</option>
+                        <option value="Werkzeug-Elektro">Werkzeug-Elektro</option>
+                        <option value="Werkzeug-Handzeug">Werkzeug-Handzeug</option>
+                        <option value="Werkzeug-Fahrrad">Werkzeug-Fahrrad</option>
+                        <option value="Nähzeug">Nähzeug</option>
+                        <option value="Küchenzeug">Küchenzeug</option>
+                        <option value="Campingzeug">Campingzeug</option>
+                        <option value="Spielzeug">Spielzeug</option>
+                        <option value="Sonstigzeug">Sonstigzeug</option>
+                    </select>
 
                     <label for="item-name">Name</label>
                     <input id="item-name" type="text" required>
@@ -83,10 +94,10 @@
 
                     <label for="item-lending-preference">Verleihbereitschaft</label>
                     <select id="item-lending-preference" required>
-                        <option value="very_happy">Sehr gerne</option>
-                        <option value="happy" selected>Gerne</option>
-                        <option value="discuss">Nach Absprache</option>
-                        <option value="exception">Nur in Ausnahmefällen</option>
+                        <option value="very_happy">Sehrsehr gerne</option>
+                        <option value="happy" selected>Sehr gerne</option>
+                        <option value="discuss">Gerne, aber pls pass gut auf</option>
+                        <option value="exception">Musst du bei mir benutzen</option>
                     </select>
 
                     <label for="item-note">Anmerkung</label>
@@ -98,11 +109,10 @@
                         type="file"
                         accept="image/*"
                         capture="environment"
-                        required
                     >
 
                     <p class="admin-help">
-                        Auf dem Smartphone kannst du direkt die Kamera verwenden.
+                        Optional. Auf dem Smartphone kannst du direkt die Kamera verwenden.
                         Das Bild wird automatisch zugeschnitten und verkleinert.
                     </p>
 

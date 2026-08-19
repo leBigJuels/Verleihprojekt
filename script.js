@@ -50,6 +50,19 @@ let selectedItemId = null;
 let selectedItemName = null;
 
 
+const CATEGORY_ORDER = [
+    "Werkzeug-Maschine",
+    "Werkzeug-Elektro",
+    "Werkzeug-Handzeug",
+    "Werkzeug-Fahrrad",
+    "Nähzeug",
+    "Küchenzeug",
+    "Campingzeug",
+    "Spielzeug",
+    "Sonstigzeug"
+];
+
+
 
 // =========================================
 // Gegenstände aus Supabase laden
@@ -88,7 +101,29 @@ async function loadItems() {
     );
 
 
-    renderItems(items);
+    const sortedItems = [...items].sort((firstItem, secondItem) => {
+        const firstCategoryIndex = CATEGORY_ORDER.indexOf(firstItem.category);
+        const secondCategoryIndex = CATEGORY_ORDER.indexOf(secondItem.category);
+
+        const firstOrder = firstCategoryIndex === -1
+            ? CATEGORY_ORDER.length
+            : firstCategoryIndex;
+
+        const secondOrder = secondCategoryIndex === -1
+            ? CATEGORY_ORDER.length
+            : secondCategoryIndex;
+
+        if (firstOrder !== secondOrder) {
+            return firstOrder - secondOrder;
+        }
+
+        return (firstItem.name ?? "").localeCompare(
+            secondItem.name ?? "",
+            "de"
+        );
+    });
+
+    renderItems(sortedItems);
 }
 
 
@@ -134,8 +169,21 @@ function renderItems(items) {
 
         const categoryCell = document.createElement("td");
 
-        categoryCell.textContent =
-            item.category ?? "";
+        const category = item.category ?? "Sonstigzeug";
+
+        if (category.startsWith("Werkzeug-")) {
+            const categoryParts = category.split("-");
+
+            categoryCell.append(
+                categoryParts[0],
+                document.createElement("br"),
+                categoryParts.slice(1).join("-")
+            );
+        }
+
+        else {
+            categoryCell.textContent = category;
+        }
 
         row.appendChild(categoryCell);
 
@@ -270,19 +318,19 @@ function renderItems(items) {
 
         const lendingPreferences = {
             very_happy: {
-                text: "Sehr gerne",
+                text: "Sehrsehr gerne",
                 className: "very-happy"
             },
             happy: {
-                text: "Gerne",
+                text: "Sehr gerne",
                 className: "happy"
             },
             discuss: {
-                text: "Nach Absprache",
+                text: "Gerne, aber pls pass gut auf",
                 className: "discuss"
             },
             exception: {
-                text: "Nur in Ausnahmefällen",
+                text: "Musst du bei mir benutzen",
                 className: "exception"
             }
         };

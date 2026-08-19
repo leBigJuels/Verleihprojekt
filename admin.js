@@ -310,44 +310,45 @@ itemImageInput.addEventListener("change", async () => {
 itemForm.addEventListener("submit", async event => {
     event.preventDefault();
 
-    if (!preparedImage) {
-        itemFormMessage.textContent = "Bitte wähle zuerst ein Bild aus.";
-        itemFormMessage.classList.add("admin-error");
-        return;
-    }
-
     saveItemButton.disabled = true;
     saveItemButton.textContent = "Wird gespeichert ...";
-    itemFormMessage.textContent = "Bild wird hochgeladen ...";
     itemFormMessage.classList.remove("admin-error");
 
-    const fileName = createImageFileName();
+    let fileName = null;
+    let imageUrl = null;
 
-    const { error: uploadError } = await supabaseClient.storage
-        .from(IMAGE_BUCKET)
-        .upload(fileName, preparedImage, {
-            contentType: "image/jpeg",
-            upsert: false
-        });
+    if (preparedImage) {
+        itemFormMessage.textContent = "Bild wird hochgeladen ...";
+        fileName = createImageFileName();
 
-    if (uploadError) {
-        finishItemSave();
-        showItemFormError(`Bild-Upload fehlgeschlagen: ${uploadError.message}`);
-        return;
+        const { error: uploadError } = await supabaseClient.storage
+            .from(IMAGE_BUCKET)
+            .upload(fileName, preparedImage, {
+                contentType: "image/jpeg",
+                upsert: false
+            });
+
+        if (uploadError) {
+            finishItemSave();
+            showItemFormError(`Bild-Upload fehlgeschlagen: ${uploadError.message}`);
+            return;
+        }
+
+        const { data: publicUrlData } = supabaseClient.storage
+            .from(IMAGE_BUCKET)
+            .getPublicUrl(fileName);
+
+        imageUrl = publicUrlData.publicUrl;
     }
-
-    const { data: publicUrlData } = supabaseClient.storage
-        .from(IMAGE_BUCKET)
-        .getPublicUrl(fileName);
 
     itemFormMessage.textContent = "Gegenstand wird gespeichert ...";
 
     const { error: insertError } = await supabaseClient
         .from("items")
         .insert({
-            category: itemCategoryInput.value.trim(),
+            category: itemCategoryInput.value || "Sonstigzeug",
             name: itemNameInput.value.trim(),
-            image_url: publicUrlData.publicUrl,
+            image_url: imageUrl,
             designation: itemDesignationInput.value.trim() || null,
             lending_preference: itemLendingPreferenceInput.value,
             status: "available",
@@ -356,9 +357,11 @@ itemForm.addEventListener("submit", async event => {
         });
 
     if (insertError) {
-        await supabaseClient.storage
-            .from(IMAGE_BUCKET)
-            .remove([fileName]);
+        if (fileName) {
+            await supabaseClient.storage
+                .from(IMAGE_BUCKET)
+                .remove([fileName]);
+        }
 
         finishItemSave();
         showItemFormError(
