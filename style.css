@@ -1,0 +1,606 @@
+/* =========================================
+   Grundeinstellungen
+   ========================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    margin: 0;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background-color: #f4f5f7;
+
+    color: #222;
+}
+
+
+/* =========================================
+   Kopfbereich
+   ========================================= */
+
+.page-header {
+    padding: 40px 30px 30px 30px;
+
+    background-color: white;
+
+    border-bottom: 1px solid #dddddd;
+}
+
+
+.page-header h1 {
+    margin: 0 0 10px 0;
+
+    font-size: 32px;
+}
+
+
+.page-header p {
+    margin: 0 0 20px 0;
+
+    color: #666;
+
+    font-size: 16px;
+}
+
+
+/* Platzhalter im oberen Bereich */
+
+.header-placeholder {
+    min-height: 50px;
+
+    padding: 15px;
+
+    border: 1px dashed #bbbbbb;
+
+    border-radius: 8px;
+
+    color: #888;
+
+    background-color: #fafafa;
+}
+
+
+
+/* =========================================
+   Hauptbereich
+   ========================================= */
+
+main {
+    padding: 30px;
+}
+
+
+/*
+   Der Container sorgt dafür,
+   dass die Tabelle bei kleinen
+   Bildschirmen horizontal scrollbar wird.
+*/
+
+.table-container {
+    width: 100%;
+
+    overflow-x: auto;
+
+    background-color: white;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 3px 12px
+        rgba(0, 0, 0, 0.08);
+}
+
+
+
+/* =========================================
+   Tabelle
+   ========================================= */
+
+.loan-table {
+    width: 100%;
+
+    min-width: 1100px;
+
+    border-collapse: collapse;
+
+    background-color: white;
+}
+
+
+
+/* Tabellenüberschrift */
+
+.loan-table thead {
+    background-color: #eeeeee;
+}
+
+
+.loan-table th {
+    padding: 14px 16px;
+
+    text-align: left;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    border-bottom: 2px solid #cccccc;
+}
+
+
+
+/* Tabellenzellen */
+
+.loan-table td {
+    padding: 14px 16px;
+
+    vertical-align: middle;
+
+    border-bottom: 1px solid #e5e5e5;
+}
+
+
+
+/* leichte Hervorhebung beim Darüberfahren */
+
+.loan-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+
+
+/* letzte Tabellenzeile */
+
+.loan-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+
+/* =========================================
+   Spaltenbreiten
+   ========================================= */
+
+
+/* Kategorie */
+
+.loan-table th:nth-child(1),
+.loan-table td:nth-child(1) {
+    width: 120px;
+}
+
+
+/* Name */
+
+.loan-table th:nth-child(2),
+.loan-table td:nth-child(2) {
+    width: 160px;
+}
+
+
+/* Bild */
+
+.loan-table th:nth-child(3),
+.loan-table td:nth-child(3) {
+    width: 130px;
+}
+
+
+/* genaue Bezeichnung */
+
+.loan-table th:nth-child(4),
+.loan-table td:nth-child(4) {
+    width: 220px;
+}
+
+
+/* Status */
+
+.loan-table th:nth-child(5),
+.loan-table td:nth-child(5) {
+    width: 130px;
+}
+
+
+/* Ausleihbutton */
+
+.loan-table th:nth-child(6),
+.loan-table td:nth-child(6) {
+    width: 150px;
+}
+
+
+/* Anmerkung */
+
+.loan-table th:nth-child(7),
+.loan-table td:nth-child(7) {
+    min-width: 220px;
+}
+
+
+
+/* =========================================
+   Name des Gegenstandes
+   ========================================= */
+
+.item-name {
+    font-weight: bold;
+}
+
+
+
+/* =========================================
+   Bilder
+   ========================================= */
+
+.image-cell img {
+    width: 100px;
+    height: 75px;
+
+    object-fit: cover;
+
+    border-radius: 6px;
+
+    display: block;
+}
+
+
+
+/* =========================================
+   Status
+   ========================================= */
+
+.status {
+    display: inline-block;
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+}
+
+
+
+/* verfügbar */
+
+.status.available {
+    background-color: #dcfce7;
+
+    color: #166534;
+}
+
+
+
+/* verliehen */
+
+.status.loaned {
+    background-color: #fee2e2;
+
+    color: #991b1b;
+}
+
+
+
+/* =========================================
+   Ausleihbutton
+   ========================================= */
+
+.request-button {
+    padding: 9px 14px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background-color: #2563eb;
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+.request-button:hover {
+    background-color: #1d4ed8;
+}
+
+
+.request-button:active {
+    transform: scale(0.98);
+}
+
+
+
+/* deaktivierter Button */
+
+.request-button:disabled {
+    background-color: #cccccc;
+
+    color: #666666;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+
+/* =========================================
+   Smartphone / kleine Bildschirme
+   ========================================= */
+
+@media (max-width: 700px) {
+
+    .page-header {
+        padding: 25px 15px;
+    }
+
+
+    .page-header h1 {
+        font-size: 26px;
+    }
+
+
+    main {
+        padding: 15px;
+    }
+
+
+    /*
+       Tabelle bleibt eine Tabelle.
+       Der Nutzer kann horizontal scrollen.
+    */
+
+    .loan-table {
+        min-width: 1000px;
+    }
+
+}
+
+/* =========================================
+   Modal / Ausleihdialog
+   ========================================= */
+
+.modal {
+    display: none;
+
+    position: fixed;
+
+    z-index: 1000;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.45);
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+}
+
+
+/* Wird von JavaScript gesetzt */
+
+.modal.active {
+    display: flex;
+}
+
+
+
+/* eigentlicher Dialog */
+
+.modal-content {
+    position: relative;
+
+    width: 100%;
+    max-width: 480px;
+
+    background-color: white;
+
+    padding: 30px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 0, 0, 0.2);
+}
+
+
+
+/* Überschrift */
+
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+
+/* Name des ausgewählten Gegenstandes */
+
+.modal-item-name {
+    margin-top: 0;
+    margin-bottom: 25px;
+
+    font-weight: bold;
+
+    color: #555;
+}
+
+
+
+/* Schließen-X */
+
+.modal-close {
+    position: absolute;
+
+    top: 12px;
+    right: 15px;
+
+    border: none;
+    background: none;
+
+    font-size: 28px;
+
+    color: #666;
+
+    cursor: pointer;
+}
+
+
+.modal-close:hover {
+    color: #222;
+
+    background: none;
+}
+
+
+
+/* =========================================
+   Formular
+   ========================================= */
+
+#request-form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+#request-form label {
+    margin-top: 8px;
+
+    font-size: 14px;
+
+    font-weight: bold;
+}
+
+
+#request-form input,
+#request-form textarea {
+    width: 100%;
+
+    padding: 11px 12px;
+
+    border: 1px solid #cccccc;
+
+    border-radius: 6px;
+
+    font-family: inherit;
+
+    font-size: 15px;
+}
+
+
+#request-form input:focus,
+#request-form textarea:focus {
+    outline: none;
+
+    border-color: #2563eb;
+}
+
+
+#request-form textarea {
+    resize: vertical;
+}
+
+
+
+/* =========================================
+   Buttons im Dialog
+   ========================================= */
+
+.modal-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 20px;
+}
+
+
+.secondary-button,
+.submit-button {
+    padding: 10px 18px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+.secondary-button {
+    background-color: #e5e7eb;
+
+    color: #222;
+}
+
+
+.secondary-button:hover {
+    background-color: #d1d5db;
+}
+
+
+.submit-button {
+    background-color: #2563eb;
+
+    color: white;
+}
+
+
+.submit-button:hover {
+    background-color: #1d4ed8;
+}
+
+
+
+/* =========================================
+   Smartphone
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .modal-content {
+        padding: 24px 18px;
+    }
+
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+
+    .secondary-button,
+    .submit-button {
+        width: 100%;
+    }
+
+}

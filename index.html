@@ -1,88 +1,177 @@
 <!DOCTYPE html>
+
 <html lang="de">
 
 <head>
     <meta charset="UTF-8">
+
+    <!-- Wichtig für Smartphones -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Verleihliste</title>
 
+    <!-- Verbindung zur CSS-Datei -->
     <link rel="stylesheet" href="style.css">
 </head>
 
+
 <body>
 
-    <header>
-        <h1>Verleihliste</h1>
-        <p>Hier findest du Dinge, die du dir bei mir ausleihen kannst.</p>
+    <!-- =========================
+         Kopfbereich der Webseite
+         ========================= -->
+
+    <header class="page-header">
+
+        <h1>Meine Verleihliste</h1>
+
+        <p>
+            Gegenstände, die Freunde und Bekannte bei mir ausleihen können.
+        </p>
+
+        <!-- Platzhalter für spätere Inhalte -->
+        <div class="header-placeholder">
+            Platzhalter für weitere Informationen
+        </div>
+
     </header>
+
+
+
+    <!-- =========================
+         Hauptbereich
+         ========================= -->
 
     <main>
 
-        <section class="objekt-liste">
+        <div class="table-container">
 
-            <article class="objekt">
-                <img src="bilder/gopro.jpg" alt="GoPro Hero 11">
+            <table class="loan-table">
 
-                <h2>GoPro Hero 11</h2>
+                <!-- Spaltenüberschriften -->
+                <thead>
 
-                <p class="beschreibung">
-                    Inklusive Akkus, Ladegerät und verschiedenen Halterungen.
-                </p>
+                    <tr>
+                        <th>Kategorie</th>
+                        <th>Name</th>
+                        <th>Bild</th>
+                        <th>Bezeichnung</th>
+                        <th>Status</th>
+                        <th>Ausleihe</th>
+                        <th>Anmerkung</th>
+                    </tr>
 
-                <p class="status verfuegbar">
-                    Verfügbar
-                </p>
-
-                <button>
-                    Ausleihe anfragen
-                </button>
-            </article>
-
-
-            <article class="objekt">
-                <img src="bilder/akkuschrauber.jpg" alt="Bosch Akkuschrauber">
-
-                <h2>Bosch Akkuschrauber</h2>
-
-                <p class="beschreibung">
-                    18-V-Akkuschrauber inklusive zwei Akkus und Ladegerät.
-                </p>
-
-                <p class="status verliehen">
-                    Momentan verliehen
-                </p>
-
-                <button disabled>
-                    Nicht verfügbar
-                </button>
-            </article>
+                </thead>
 
 
-            <article class="objekt">
-                <img src="bilder/zelt.jpg" alt="Zweipersonenzelt">
+                <!-- Verleihobjekte -->
+                <tbody id="items-body">
 
-                <h2>2-Personen-Zelt</h2>
+                    <tr>
+                        <td colspan="7">
+                            Gegenstände werden geladen ...
+                        </td>
+                    </tr>
 
-                <p class="beschreibung">
-                    Kleines Zelt für zwei Personen inklusive Packsack.
-                </p>
+                </tbody>
 
-                <p class="status verfuegbar">
-                    Verfügbar
-                </p>
+            </table>
 
-                <button>
-                    Ausleihe anfragen
-                </button>
-            </article>
-
-        </section>
+        </div>
 
     </main>
 
-    <script src="script.js"></script>
 
+
+    <!-- JavaScript kommt später -->
+    <!-- <script src="script.js"></script> -->
+<!-- =========================
+     Ausleihdialog
+     ========================= -->
+
+<div id="request-modal" class="modal">
+
+    <div class="modal-content">
+
+        <button
+            id="modal-close"
+            class="modal-close"
+            type="button"
+            aria-label="Fenster schließen"
+        >
+            &times;
+        </button>
+
+
+        <h2>Ausleihe anfragen</h2>
+
+        <p id="modal-item-name" class="modal-item-name"></p>
+
+
+        <form id="request-form">
+
+            <!-- Name: Pflichtfeld -->
+
+            <label for="borrower-name">
+                Name *
+            </label>
+
+            <input
+                type="text"
+                id="borrower-name"
+                name="borrower-name"
+                required
+                autocomplete="name"
+            >
+
+
+            <!-- Anmerkung: optional -->
+
+            <label for="request-note">
+                Anmerkung
+            </label>
+
+            <textarea
+                id="request-note"
+                name="request-note"
+                rows="4"
+                placeholder="Optional: Zeitraum, Zubehörwünsche etc."
+            ></textarea>
+
+
+            <!-- Buttons -->
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    id="cancel-button"
+                    class="secondary-button"
+                >
+                    Abbrechen
+                </button>
+
+                <button
+                    type="submit"
+                    class="submit-button"
+                >
+                    Senden
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- Supabase JavaScript-Bibliothek -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Unser eigener JavaScript-Code -->
+<script src="script.js"></script>
 </body>
 
 </html>
