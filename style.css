@@ -85,14 +85,14 @@ main {
 
 
 .table-area {
-    padding: 30px 30px 0;
+    padding: 30px 30px 40px;
 
     background-color: #ffffff;
 }
 
 
 .after-table-area {
-    padding: 30px;
+    padding: 45px 30px 30px;
 
     background-color: #f4f5f7;
 }
@@ -1084,12 +1084,12 @@ main {
 @media (max-width: 600px) {
 
     .table-area {
-        padding: 15px 15px 0;
+        padding: 15px 15px 30px;
     }
 
 
     .after-table-area {
-        padding: 20px 15px;
+        padding: 35px 15px 20px;
     }
 
 
