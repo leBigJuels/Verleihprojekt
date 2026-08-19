@@ -64,6 +64,11 @@ const editItemDesignationInput = document.getElementById("edit-item-designation"
 const editItemLendingPreferenceInput =
     document.getElementById("edit-item-lending-preference");
 const editItemNoteInput = document.getElementById("edit-item-note");
+const editItemImageInput = document.getElementById("edit-item-image");
+const editImagePreviewContainer =
+    document.getElementById("edit-image-preview-container");
+const editImagePreview = document.getElementById("edit-image-preview");
+const editImageInfo = document.getElementById("edit-image-info");
 const editItemMessage = document.getElementById("edit-item-message");
 const cancelEditItemButton = document.getElementById("cancel-edit-item");
 
@@ -72,6 +77,8 @@ let preparedImage = null;
 let previewUrl = null;
 let selectedEditItemId = null;
 let editableItems = new Map();
+let preparedEditImage = null;
+let editPreviewUrl = null;
 
 const CATEGORY_ORDER = [
     "Werkzeug-Maschine",
@@ -294,16 +301,35 @@ function createActionButton(label, className, status, requestId) {
 // =========================================
 
 async function loadAdminItems() {
-    const { data: items, error } = await supabaseClient
-        .from("items")
-        .select("*");
+    const [itemsResult, requestsResult] = await Promise.all([
+        supabaseClient
+            .from("items")
+            .select("*"),
 
-    if (error) {
+        supabaseClient
+            .from("requests")
+            .select("item_id, borrower_name, status, created_at")
+            .in("status", ["approved", "completed"])
+            .order("created_at", { ascending: false })
+    ]);
+
+    if (itemsResult.error || requestsResult.error) {
         itemsManagementBody.innerHTML = `
-            <tr><td colspan="4">Gegenstände konnten nicht geladen werden.</td></tr>
+            <tr><td colspan="5">Gegenstände konnten nicht geladen werden.</td></tr>
         `;
         return;
     }
+
+    const items = itemsResult.data;
+    const historiesByItemId = new Map();
+
+    requestsResult.data.forEach(request => {
+        const itemId = String(request.item_id);
+        const history = historiesByItemId.get(itemId) ?? [];
+
+        history.push(request);
+        historiesByItemId.set(itemId, history);
+    });
 
     const sortedItems = [...items].sort((firstItem, secondItem) => {
         const firstOrder = CATEGORY_ORDER.indexOf(firstItem.category);
@@ -331,16 +357,16 @@ async function loadAdminItems() {
         sortedItems.map(item => [String(item.id), item])
     );
 
-    renderAdminItems(sortedItems);
+    renderAdminItems(sortedItems, historiesByItemId);
 }
 
 
-function renderAdminItems(items) {
+function renderAdminItems(items, historiesByItemId) {
     itemsManagementBody.innerHTML = "";
 
     if (items.length === 0) {
         itemsManagementBody.innerHTML = `
-            <tr><td colspan="4">Keine Gegenstände vorhanden.</td></tr>
+            <tr><td colspan="5">Keine Gegenstände vorhanden.</td></tr>
         `;
         return;
     }
@@ -351,6 +377,35 @@ function renderAdminItems(items) {
         appendTextCell(row, item.category ?? "Sonstigzeug");
         appendTextCell(row, item.name);
         appendTextCell(row, getStatusLabel(item.status));
+
+        const historyCell = document.createElement("td");
+        const history = historiesByItemId.get(String(item.id)) ?? [];
+
+        if (history.length === 0) {
+            historyCell.textContent = "Noch nicht verliehen";
+        }
+
+        else {
+            const historyList = document.createElement("ul");
+
+            historyList.classList.add("item-history-list");
+
+            history.forEach(request => {
+                const entry = document.createElement("li");
+                const status = request.status === "approved"
+                    ? "aktuell verliehen"
+                    : "zurückgegeben";
+
+                entry.textContent =
+                    `${request.borrower_name} – ${formatDate(request.created_at)} (${status})`;
+
+                historyList.appendChild(entry);
+            });
+
+            historyCell.appendChild(historyList);
+        }
+
+        row.appendChild(historyCell);
 
         const actionsCell = document.createElement("td");
         const actions = document.createElement("div");
@@ -397,6 +452,24 @@ function openItemEditor(item) {
     editItemDesignationInput.value = item.designation ?? "";
     editItemLendingPreferenceInput.value = item.lending_preference ?? "happy";
     editItemNoteInput.value = item.note ?? "";
+    preparedEditImage = null;
+
+    if (editPreviewUrl) {
+        URL.revokeObjectURL(editPreviewUrl);
+        editPreviewUrl = null;
+    }
+
+    if (item.image_url) {
+        editImagePreview.src = item.image_url;
+        editImageInfo.textContent = "Aktuelles Bild";
+        editImagePreviewContainer.hidden = false;
+    }
+
+    else {
+        editImagePreview.removeAttribute("src");
+        editImageInfo.textContent = "Noch kein Bild vorhanden";
+        editImagePreviewContainer.hidden = true;
+    }
     editItemMessage.textContent = "";
     editItemForm.hidden = false;
     editItemForm.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -407,6 +480,13 @@ function closeItemEditor() {
     selectedEditItemId = null;
     editItemForm.reset();
     editItemForm.hidden = true;
+    preparedEditImage = null;
+    editImagePreviewContainer.hidden = true;
+
+    if (editPreviewUrl) {
+        URL.revokeObjectURL(editPreviewUrl);
+        editPreviewUrl = null;
+    }
     editItemMessage.textContent = "";
     editItemMessage.classList.remove("admin-error");
 }
@@ -482,6 +562,36 @@ editItemForm.addEventListener("submit", async event => {
     editItemMessage.textContent = "Änderungen werden gespeichert ...";
     editItemMessage.classList.remove("admin-error");
 
+    const currentItem = editableItems.get(String(selectedEditItemId));
+    let newFileName = null;
+    let newImageUrl = currentItem?.image_url ?? null;
+
+    if (preparedEditImage) {
+        editItemMessage.textContent = "Neues Bild wird hochgeladen ...";
+        newFileName = createImageFileName();
+
+        const { error: uploadError } = await supabaseClient.storage
+            .from(IMAGE_BUCKET)
+            .upload(newFileName, preparedEditImage, {
+                contentType: "image/jpeg",
+                upsert: false
+            });
+
+        if (uploadError) {
+            submitButton.disabled = false;
+            editItemMessage.textContent =
+                `Bild-Upload fehlgeschlagen: ${uploadError.message}`;
+            editItemMessage.classList.add("admin-error");
+            return;
+        }
+
+        const { data: publicUrlData } = supabaseClient.storage
+            .from(IMAGE_BUCKET)
+            .getPublicUrl(newFileName);
+
+        newImageUrl = publicUrlData.publicUrl;
+    }
+
     const { error } = await supabaseClient
         .from("items")
         .update({
@@ -489,17 +599,35 @@ editItemForm.addEventListener("submit", async event => {
             name: editItemNameInput.value.trim(),
             designation: editItemDesignationInput.value.trim() || null,
             lending_preference: editItemLendingPreferenceInput.value,
-            note: editItemNoteInput.value.trim() || null
+            note: editItemNoteInput.value.trim() || null,
+            image_url: newImageUrl
         })
         .eq("id", selectedEditItemId);
 
     submitButton.disabled = false;
 
     if (error) {
+        if (newFileName) {
+            await supabaseClient.storage
+                .from(IMAGE_BUCKET)
+                .remove([newFileName]);
+        }
+
         editItemMessage.textContent =
             `Änderungen konnten nicht gespeichert werden: ${error.message}`;
         editItemMessage.classList.add("admin-error");
         return;
+    }
+
+    if (newFileName && currentItem?.image_url) {
+        const pathMarker = "/storage/v1/object/public/item-images/";
+        const oldImagePath = currentItem.image_url.split(pathMarker)[1];
+
+        if (oldImagePath) {
+            await supabaseClient.storage
+                .from(IMAGE_BUCKET)
+                .remove([decodeURIComponent(oldImagePath)]);
+        }
     }
 
     closeItemEditor();
@@ -510,6 +638,44 @@ editItemForm.addEventListener("submit", async event => {
 
 
 cancelEditItemButton.addEventListener("click", closeItemEditor);
+
+
+editItemImageInput.addEventListener("change", async () => {
+    const file = editItemImageInput.files[0];
+
+    preparedEditImage = null;
+    editItemMessage.textContent = "";
+    editItemMessage.classList.remove("admin-error");
+
+    if (!file) {
+        return;
+    }
+
+    editItemMessage.textContent = "Bild wird vorbereitet ...";
+
+    try {
+        preparedEditImage = await resizeImage(file);
+
+        if (editPreviewUrl) {
+            URL.revokeObjectURL(editPreviewUrl);
+        }
+
+        editPreviewUrl = URL.createObjectURL(preparedEditImage);
+        editImagePreview.src = editPreviewUrl;
+        editImagePreviewContainer.hidden = false;
+        editImageInfo.textContent =
+            `Neues Bild: 1280 × 720 Pixel, ${formatFileSize(preparedEditImage.size)}`;
+        editItemMessage.textContent = "Neues Bild ist bereit.";
+    }
+
+    catch (error) {
+        console.error("Fehler bei der Bildverarbeitung:", error);
+        editItemMessage.textContent =
+            "Das Bild konnte nicht verarbeitet werden. Bitte wähle ein anderes Foto.";
+        editItemMessage.classList.add("admin-error");
+        editItemImageInput.value = "";
+    }
+});
 
 
 // =========================================

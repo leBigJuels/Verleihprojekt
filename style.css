@@ -30,7 +30,7 @@ body {
 .page-header {
     padding: 40px 30px 30px 30px;
 
-    background-color: white;
+    background-color: #f4f5f7;
 
     border-bottom: 1px solid #dddddd;
 }
@@ -88,15 +88,6 @@ main {
     padding: 30px 30px 0;
 
     background-color: #ffffff;
-}
-
-
-.table-bottom-bar {
-    height: 10px;
-
-    margin-top: 28px;
-
-    background-color: #c9cdd3;
 }
 
 
@@ -1030,7 +1021,19 @@ main {
 
 
 .item-management-table {
-    min-width: 700px;
+    min-width: 950px;
+}
+
+
+.item-history-list {
+    margin: 0;
+
+    padding-left: 18px;
+}
+
+
+.item-history-list li + li {
+    margin-top: 5px;
 }
 
 

@@ -201,6 +201,23 @@
                     <label for="edit-item-note">Anmerkung</label>
                     <textarea id="edit-item-note" rows="3"></textarea>
 
+                    <label for="edit-item-image">Bild ersetzen/hinzufügen</label>
+                    <input
+                        id="edit-item-image"
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                    >
+
+                    <p class="admin-help">
+                        Optional. Ohne Auswahl bleibt das bestehende Bild unverändert.
+                    </p>
+
+                    <div id="edit-image-preview-container" class="image-preview-container" hidden>
+                        <img id="edit-image-preview" alt="Bildvorschau des Gegenstands">
+                        <p id="edit-image-info" class="admin-help"></p>
+                    </div>
+
                     <div class="edit-item-actions">
                         <button class="submit-button" type="submit">Änderungen speichern</button>
                         <button id="cancel-edit-item" class="secondary-button" type="button">Abbrechen</button>
@@ -216,6 +233,7 @@
                                 <th>Kategorie</th>
                                 <th>Gegenstand</th>
                                 <th>Status</th>
+                                <th>Ausleihhistorie</th>
                                 <th>Aktion</th>
                             </tr>
                         </thead>
