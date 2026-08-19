@@ -26,12 +26,12 @@
         <h1>Verleihliste für Bubus und Bebes</h1>
 
         <p>
-            weil Sharing is Caring
+            weil Sharing is Caring 
         </p>
 
         <!-- Platzhalter für spätere Inhalte -->
         <div class="header-placeholder">
-            Platzhalter weil Errare Humanum es
+            Platzhalter wegen Errare Humanum es
         </div>
 
     </header>
@@ -42,11 +42,9 @@
          Hauptbereich
          ========================= -->
 
-    <main class="public-main">
+    <main>
 
-        <section class="table-area">
-
-            <div class="table-container">
+        <div class="table-container">
 
             <table class="loan-table">
 
@@ -80,44 +78,38 @@
 
             </table>
 
-            </div>
+        </div>
 
-            <div class="table-bottom-bar" aria-hidden="true"></div>
+        <section class="list-explanation">
+            <p>
+                Kurze Erklärung zu dem Bumms: Die Liste dient der Bewältigung meines Chaos
+                und der Sinverleihung meines Konsums. Zudem glaibe ich an die verdopplung
+                von Glück durch Teilen von Glück und Zeugs ist Glück!
+            </p>
+
+            <p>
+                Wenn ihr etwas Ausleihen wollt wird der Gegenstand für euch reserviert,
+                ich bekomme eine Mail und kann die Ausleihe bestätigen.
+            </p>
         </section>
 
-        <section class="after-table-area">
+        <section class="readyness-legend" aria-label="Erklärung der Readyness-Farben">
+            <p><strong>Readyness</strong> – Soll nur zeigen wie gerne ich etwas verleihe</p>
 
-            <section class="list-explanation">
-                <p>
-                    Kurze Erklärung zu dem Bumms: Die Liste dient der Bewältigung meines Chaos
-                    und der Sinverleihung meines Konsums. Zudem glaibe ich an die verdopplung
-                    von Glück durch Teilen von Glück und Zeugs ist Glück!
-                </p>
-
-                <p>
-                    Wenn ihr etwas Ausleihen wollt wird der Gegenstand für euch reserviert,
-                    ich bekomme eine Mail und kann die Ausleihe bestätigen.
-                </p>
-            </section>
-
-            <section class="readyness-legend" aria-label="Erklärung der Readyness-Farben">
-                <p><strong>Readyness</strong> – Soll nur zeigen wie gerne ich etwas verleihe</p>
-
-                <ul>
-                    <li><span class="legend-color very-happy" aria-hidden="true"></span>sehrsehr gerne</li>
-                    <li><span class="legend-color happy" aria-hidden="true"></span>sehr gerne</li>
-                    <li><span class="legend-color discuss" aria-hidden="true"></span>Gerne aber pass gut auf pls</li>
-                    <li><span class="legend-color exception" aria-hidden="true"></span>Musst du bei mir nutzen</li>
-                </ul>
-            </section>
+            <ul>
+                <li><span class="legend-color very-happy" aria-hidden="true"></span>sehrsehr gerne</li>
+                <li><span class="legend-color happy" aria-hidden="true"></span>sehr gerne</li>
+                <li><span class="legend-color discuss" aria-hidden="true"></span>Gerne aber pass gut auf pls</li>
+                <li><span class="legend-color exception" aria-hidden="true"></span>Musst du bei mir nutzen</li>
+            </ul>
         </section>
 
     </main>
 
     <footer class="page-footer">
         <div class="imprint">
-            <strong>Impressum:</strong>
-            <strong>leBig Juels</strong>
+            <strong>Impressum</strong>
+            <span>Name: leBigJuels</span>
             <span>Kontakt: Shababs haben meine Nummer</span>
         </div>
 
@@ -146,7 +138,7 @@
         </button>
 
 
-        <h2>Ausleihe anfragen</h2>
+        <h2>Anfrage</h2>
 
         <p id="modal-item-name" class="modal-item-name"></p>
 
@@ -156,7 +148,7 @@
             <!-- Name: Pflichtfeld -->
 
             <label for="borrower-name">
-                Name *
+                Name 
             </label>
 
             <input
@@ -165,6 +157,7 @@
                 name="borrower-name"
                 required
                 autocomplete="name"
+                placeholder="Pflicht"
             >
 
 
@@ -178,7 +171,7 @@
                 id="request-note"
                 name="request-note"
                 rows="4"
-                placeholder="Optional: Zeitraum, Zubehörwünsche etc."
+                placeholder="Optional: z.B. Questions, Zeitraum, etc."
             ></textarea>
 
 
