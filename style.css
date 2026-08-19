@@ -813,6 +813,30 @@ main {
 }
 
 
+.password-card {
+    max-width: 520px;
+
+    margin-right: auto;
+    margin-left: auto;
+}
+
+
+.form-field-group {
+    display: grid;
+
+    gap: 12px;
+}
+
+
+.recovery-area {
+    margin-top: 25px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #e5e5e5;
+}
+
+
 [hidden] {
     display: none !important;
 }
