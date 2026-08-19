@@ -31,6 +31,9 @@ const cancelButton = document.getElementById("cancel-button");
 
 const requestForm = document.getElementById("request-form");
 
+const submitButton =
+    requestForm.querySelector(".submit-button");
+
 const borrowerNameInput =
     document.getElementById("borrower-name");
 
@@ -226,6 +229,15 @@ function renderItems(items) {
 
             status.textContent =
                 "Verliehen";
+
+        }
+
+        else if (item.status === "reserved") {
+
+            status.classList.add("reserved");
+
+            status.textContent =
+                "Reserviert";
 
         }
 
@@ -454,7 +466,7 @@ document.addEventListener(
 
 requestForm.addEventListener(
     "submit",
-    event => {
+    async event => {
 
         // Standardverhalten verhindern
         // -> Seite wird nicht neu geladen
@@ -469,34 +481,57 @@ requestForm.addEventListener(
             requestNoteInput.value.trim();
 
 
-        console.log(
-            "Objekt-ID:",
-            selectedItemId
-        );
+        // Mehrfaches Absenden verhindern
 
-        console.log(
-            "Gegenstand:",
-            selectedItemName
-        );
+        submitButton.disabled = true;
+        submitButton.textContent = "Wird gesendet ...";
 
-        console.log(
-            "Name:",
-            borrowerName
-        );
 
-        console.log(
-            "Anmerkung:",
-            requestNote
-        );
+        const { error } = await supabaseClient
+            .from("requests")
+            .insert({
+                item_id: selectedItemId,
+                borrower_name: borrowerName,
+                note: requestNote || null,
+                status: "pending"
+            });
+
+
+        // Button wieder freigeben
+
+        submitButton.disabled = false;
+        submitButton.textContent = "Senden";
+
+
+        if (error) {
+
+            console.error(
+                "Fehler beim Speichern der Anfrage:",
+                error
+            );
+
+            alert(
+                "Die Anfrage konnte leider nicht gespeichert werden. " +
+                "Bitte versuche es noch einmal.\n\n" +
+                `Technische Meldung: ${error.message}`
+            );
+
+            return;
+        }
 
 
         alert(
             `Danke ${borrowerName}!\n\n` +
-            `Deine Anfrage für "${selectedItemName}" wurde erfasst.`
+            `Deine Anfrage für "${selectedItemName}" wurde gesendet.`
         );
 
 
         closeModal();
+
+
+        // Den neuen Status "Reserviert" direkt anzeigen
+
+        await loadItems();
 
     }
 );

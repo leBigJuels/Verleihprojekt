@@ -290,6 +290,15 @@ main {
 }
 
 
+/* reserviert */
+
+.status.reserved {
+    background-color: #fef3c7;
+
+    color: #92400e;
+}
+
+
 
 /* =========================================
    Ausleihbutton
@@ -578,6 +587,167 @@ main {
 
 .submit-button:hover {
     background-color: #1d4ed8;
+}
+
+
+.submit-button:disabled {
+    background-color: #93a3bb;
+
+    cursor: wait;
+}
+
+
+/* =========================================
+   Fußbereich
+   ========================================= */
+
+.page-footer {
+    padding: 5px 30px 30px;
+
+    text-align: right;
+}
+
+
+.page-footer a {
+    color: #666;
+
+    font-size: 13px;
+}
+
+
+/* =========================================
+   Adminbereich
+   ========================================= */
+
+.admin-container {
+    width: min(1100px, calc(100% - 30px));
+
+    margin: 30px auto;
+}
+
+
+.admin-card {
+    margin-bottom: 25px;
+
+    padding: 25px;
+
+    border-radius: 10px;
+
+    background-color: white;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+
+.admin-card h2 {
+    margin-top: 0;
+}
+
+
+.admin-login-form {
+    display: grid;
+
+    gap: 12px;
+
+    max-width: 420px;
+}
+
+
+.admin-login-form label {
+    font-weight: bold;
+}
+
+
+.admin-login-form input {
+    padding: 11px 12px;
+
+    border: 1px solid #cccccc;
+
+    border-radius: 6px;
+
+    font: inherit;
+}
+
+
+.admin-header-row {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+
+.admin-table-wrapper {
+    overflow-x: auto;
+}
+
+
+.admin-table {
+    width: 100%;
+
+    min-width: 850px;
+
+    border-collapse: collapse;
+}
+
+
+.admin-table th,
+.admin-table td {
+    padding: 12px;
+
+    text-align: left;
+
+    border-bottom: 1px solid #e5e5e5;
+}
+
+
+.admin-actions {
+    display: flex;
+
+    gap: 8px;
+}
+
+
+.approve-button,
+.reject-button,
+.return-button {
+    padding: 8px 11px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    color: white;
+
+    cursor: pointer;
+}
+
+
+.approve-button,
+.return-button {
+    background-color: #15803d;
+}
+
+
+.reject-button {
+    background-color: #b91c1c;
+}
+
+
+.admin-message {
+    color: #555;
+}
+
+
+.admin-error {
+    color: #b91c1c;
+}
+
+
+[hidden] {
+    display: none !important;
 }
 
 

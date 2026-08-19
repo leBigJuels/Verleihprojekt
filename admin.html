@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Adminbereich – Verleihliste</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="page-header">
+        <h1>Adminbereich</h1>
+
+        <p>Ausleihanfragen bearbeiten und Rückgaben eintragen.</p>
+
+        <a href="index.html">Zur öffentlichen Verleihliste</a>
+    </header>
+
+
+    <main class="admin-container">
+
+        <section id="login-section" class="admin-card">
+            <h2>Anmelden</h2>
+
+            <form id="admin-login-form" class="admin-login-form">
+                <label for="admin-email">Benutzername</label>
+
+                <input
+                    id="admin-email"
+                    type="email"
+                    value="name@web.de"
+                    autocomplete="username"
+                    required
+                >
+
+                <label for="admin-password">Passwort</label>
+
+                <input
+                    id="admin-password"
+                    type="password"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button class="submit-button" type="submit">
+                    Anmelden
+                </button>
+
+                <p id="login-message" class="admin-message"></p>
+            </form>
+        </section>
+
+
+        <section id="dashboard-section" hidden>
+            <div class="admin-card admin-header-row">
+                <div>
+                    <h2>Anfragen</h2>
+                    <p id="admin-user" class="admin-message"></p>
+                </div>
+
+                <button id="logout-button" class="secondary-button" type="button">
+                    Abmelden
+                </button>
+            </div>
+
+
+            <div class="admin-card">
+                <h2>Offene Anfragen</h2>
+
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Gegenstand</th>
+                                <th>Name</th>
+                                <th>Anmerkung</th>
+                                <th>Zeitpunkt</th>
+                                <th>Aktion</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="pending-requests-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="admin-card">
+                <h2>Verliehene Gegenstände</h2>
+
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Gegenstand</th>
+                                <th>Ausgeliehen an</th>
+                                <th>Anmerkung</th>
+                                <th>Zeitpunkt</th>
+                                <th>Aktion</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="approved-requests-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <p id="dashboard-message" class="admin-message"></p>
+        </section>
+
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="admin.js"></script>
+
+</body>
+
+</html>
