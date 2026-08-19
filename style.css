@@ -312,15 +312,10 @@ main {
 .lending-preference {
     display: inline-block;
 
-    padding: 6px 10px;
+    width: 18px;
+    height: 18px;
 
-    border-radius: 999px;
-
-    font-size: 0.85rem;
-
-    font-weight: bold;
-
-    line-height: 1.25;
+    border-radius: 50%;
 }
 
 
@@ -332,32 +327,31 @@ main {
 
 
 .lending-preference.happy {
-    background-color: #dcfce7;
+    background-color: #86d9a0;
 
     color: #166534;
 }
 
 
 .lending-preference.discuss {
-    background-color: #fef3c7;
+    background-color: #f6cf64;
 
     color: #92400e;
 }
 
 
 .lending-preference.exception {
-    background-color: #fee2e2;
+    background-color: #ef7777;
 
     color: #991b1b;
 }
 
 
-/* Readyness-Legende */
+/* Erklärung und Readyness-Legende */
 
+.list-explanation,
 .readyness-legend {
     max-width: 720px;
-
-    margin-top: 28px;
 
     padding: 18px 20px;
 
@@ -369,15 +363,29 @@ main {
 }
 
 
-.readyness-legend h2 {
-    margin: 0 0 6px;
+.list-explanation {
+    margin-top: 28px;
+}
 
-    font-size: 18px;
+
+.list-explanation p {
+    margin: 0;
+}
+
+
+.list-explanation p + p {
+    margin-top: 12px;
+}
+
+.readyness-legend {
+    margin-top: 14px;
 }
 
 
 .readyness-legend p {
     margin: 0 0 12px;
+
+    font-size: inherit;
 }
 
 
@@ -734,9 +742,30 @@ main {
    ========================================= */
 
 .page-footer {
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
     padding: 5px 30px 30px;
 
-    text-align: right;
+    text-align: left;
+}
+
+
+.imprint {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+    color: #666;
+
+    font-size: 13px;
 }
 
 

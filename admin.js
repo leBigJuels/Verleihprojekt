@@ -108,7 +108,7 @@ async function showDashboard(user) {
     if (!user || user.id !== ADMIN_USER_ID) {
         await supabaseClient.auth.signOut();
 
-        showLogin("Dieses Konto besitzt keine Adminrechte.");
+        showLogin("Dieses Konto besitzt keinen Zugriff auf die privateArea.");
         loginMessage.classList.add("admin-error");
         return;
     }
@@ -144,7 +144,7 @@ async function loadRequests() {
     if (requestsResult.error || itemsResult.error) {
         const error = requestsResult.error ?? itemsResult.error;
 
-        console.error("Fehler beim Laden des Adminbereichs:", error);
+        console.error("Fehler beim Laden der privateArea:", error);
 
         dashboardMessage.textContent =
             `Daten konnten nicht geladen werden: ${error.message}`;

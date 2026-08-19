@@ -63,6 +63,35 @@ const CATEGORY_ORDER = [
 ];
 
 
+function normalizeCategory(category) {
+    return String(category ?? "")
+        .trim()
+        .replace(/\s*-\s*/g, "-")
+        .replace(/^werkzeug[\s_]+/i, "Werkzeug-")
+        .toLocaleLowerCase("de");
+}
+
+
+const CATEGORY_LOOKUP = Object.fromEntries(
+    CATEGORY_ORDER.map(category => [
+        normalizeCategory(category),
+        category
+    ])
+);
+
+
+function getCanonicalCategory(category) {
+    const cleanedCategory = String(category ?? "").trim();
+
+    if (!cleanedCategory) {
+        return "Sonstigzeug";
+    }
+
+    return CATEGORY_LOOKUP[normalizeCategory(cleanedCategory)]
+        ?? "Sonstigzeug";
+}
+
+
 
 // =========================================
 // Gegenstände aus Supabase laden
@@ -72,8 +101,7 @@ async function loadItems() {
 
     const { data: items, error } = await supabaseClient
         .from("items")
-        .select("*")
-        .order("id", { ascending: true });
+        .select("*");
 
 
     if (error) {
@@ -102,8 +130,11 @@ async function loadItems() {
 
 
     const sortedItems = [...items].sort((firstItem, secondItem) => {
-        const firstCategoryIndex = CATEGORY_ORDER.indexOf(firstItem.category);
-        const secondCategoryIndex = CATEGORY_ORDER.indexOf(secondItem.category);
+        const firstCategory = getCanonicalCategory(firstItem.category);
+        const secondCategory = getCanonicalCategory(secondItem.category);
+
+        const firstCategoryIndex = CATEGORY_ORDER.indexOf(firstCategory);
+        const secondCategoryIndex = CATEGORY_ORDER.indexOf(secondCategory);
 
         const firstOrder = firstCategoryIndex === -1
             ? CATEGORY_ORDER.length
@@ -169,7 +200,7 @@ function renderItems(items) {
 
         const categoryCell = document.createElement("td");
 
-        const category = item.category ?? "Sonstigzeug";
+        const category = getCanonicalCategory(item.category);
 
         if (category.startsWith("Werkzeug-")) {
             const categoryParts = category.split("-");
@@ -342,7 +373,12 @@ function renderItems(items) {
         lendingPreferenceBadge.className =
             `lending-preference ${lendingPreference.className}`;
 
-        lendingPreferenceBadge.textContent =
+        lendingPreferenceBadge.setAttribute(
+            "aria-label",
+            lendingPreference.text
+        );
+
+        lendingPreferenceBadge.title =
             lendingPreference.text;
 
         lendingPreferenceCell.appendChild(
