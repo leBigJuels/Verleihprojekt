@@ -179,6 +179,9 @@ function renderItems(items) {
             image.alt =
                 item.designation ?? item.name;
 
+            image.loading = "lazy";
+            image.decoding = "async";
+
             imageCell.appendChild(image);
         }
 

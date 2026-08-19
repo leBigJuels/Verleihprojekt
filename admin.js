@@ -6,6 +6,7 @@ const SUPABASE_URL = "https://crzdhuyerfqsffokoymv.supabase.co";
 const SUPABASE_KEY = "sb_publishable_YLwCRgWkKToBkUZLKmJrrg_v9ryXE8y";
 
 const ADMIN_USER_ID = "99840258-fdff-4a58-b014-478b2bc54b3a";
+const IMAGE_BUCKET = "item-images";
 
 const supabaseClient = supabase.createClient(
     SUPABASE_URL,
@@ -36,6 +37,25 @@ const approvedRequestsBody =
 
 const dashboardMessage =
     document.getElementById("dashboard-message");
+
+const itemForm = document.getElementById("item-form");
+const itemCategoryInput = document.getElementById("item-category");
+const itemNameInput = document.getElementById("item-name");
+const itemDesignationInput = document.getElementById("item-designation");
+const itemNoteInput = document.getElementById("item-note");
+const itemImageInput = document.getElementById("item-image");
+
+const imagePreviewContainer =
+    document.getElementById("image-preview-container");
+
+const imagePreview = document.getElementById("image-preview");
+const imageInfo = document.getElementById("image-info");
+const saveItemButton = document.getElementById("save-item-button");
+const itemFormMessage = document.getElementById("item-form-message");
+
+
+let preparedImage = null;
+let previewUrl = null;
 
 
 // =========================================
@@ -235,6 +255,238 @@ function createActionButton(label, className, status, requestId) {
     button.dataset.requestId = requestId;
 
     return button;
+}
+
+
+// =========================================
+// Bild vorbereiten und Gegenstand anlegen
+// =========================================
+
+itemImageInput.addEventListener("change", async () => {
+    const file = itemImageInput.files[0];
+
+    preparedImage = null;
+    imagePreviewContainer.hidden = true;
+    itemFormMessage.textContent = "";
+    itemFormMessage.classList.remove("admin-error");
+
+    if (!file) {
+        return;
+    }
+
+    itemFormMessage.textContent = "Bild wird vorbereitet ...";
+
+    try {
+        preparedImage = await resizeImage(file);
+
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+        }
+
+        previewUrl = URL.createObjectURL(preparedImage);
+        imagePreview.src = previewUrl;
+        imagePreviewContainer.hidden = false;
+
+        imageInfo.textContent =
+            `1280 × 720 Pixel, ${formatFileSize(preparedImage.size)}`;
+
+        itemFormMessage.textContent = "Bild ist bereit.";
+    }
+
+    catch (error) {
+        console.error("Fehler bei der Bildverarbeitung:", error);
+
+        itemFormMessage.textContent =
+            "Das Bild konnte nicht verarbeitet werden. " +
+            "Bitte wähle ein anderes Foto.";
+
+        itemFormMessage.classList.add("admin-error");
+        itemImageInput.value = "";
+    }
+});
+
+
+itemForm.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!preparedImage) {
+        itemFormMessage.textContent = "Bitte wähle zuerst ein Bild aus.";
+        itemFormMessage.classList.add("admin-error");
+        return;
+    }
+
+    saveItemButton.disabled = true;
+    saveItemButton.textContent = "Wird gespeichert ...";
+    itemFormMessage.textContent = "Bild wird hochgeladen ...";
+    itemFormMessage.classList.remove("admin-error");
+
+    const fileName = createImageFileName();
+
+    const { error: uploadError } = await supabaseClient.storage
+        .from(IMAGE_BUCKET)
+        .upload(fileName, preparedImage, {
+            contentType: "image/jpeg",
+            upsert: false
+        });
+
+    if (uploadError) {
+        finishItemSave();
+        showItemFormError(`Bild-Upload fehlgeschlagen: ${uploadError.message}`);
+        return;
+    }
+
+    const { data: publicUrlData } = supabaseClient.storage
+        .from(IMAGE_BUCKET)
+        .getPublicUrl(fileName);
+
+    itemFormMessage.textContent = "Gegenstand wird gespeichert ...";
+
+    const { error: insertError } = await supabaseClient
+        .from("items")
+        .insert({
+            category: itemCategoryInput.value.trim(),
+            name: itemNameInput.value.trim(),
+            image_url: publicUrlData.publicUrl,
+            designation: itemDesignationInput.value.trim() || null,
+            status: "available",
+            note: itemNoteInput.value.trim() || null,
+            created_at: new Date().toISOString()
+        });
+
+    if (insertError) {
+        await supabaseClient.storage
+            .from(IMAGE_BUCKET)
+            .remove([fileName]);
+
+        finishItemSave();
+        showItemFormError(
+            `Gegenstand konnte nicht gespeichert werden: ${insertError.message}`
+        );
+        return;
+    }
+
+    itemForm.reset();
+    preparedImage = null;
+    imagePreviewContainer.hidden = true;
+
+    if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+        previewUrl = null;
+    }
+
+    finishItemSave();
+    itemFormMessage.textContent = "Gegenstand wurde erfolgreich hinzugefügt.";
+});
+
+
+function resizeImage(file) {
+    return new Promise((resolve, reject) => {
+        const sourceUrl = URL.createObjectURL(file);
+        const image = new Image();
+
+        image.onload = async () => {
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+
+            const targetWidth = 1280;
+            const targetHeight = 720;
+            const targetRatio = targetWidth / targetHeight;
+            const sourceRatio = image.naturalWidth / image.naturalHeight;
+
+            let sourceWidth = image.naturalWidth;
+            let sourceHeight = image.naturalHeight;
+            let sourceX = 0;
+            let sourceY = 0;
+
+            if (sourceRatio > targetRatio) {
+                sourceWidth = image.naturalHeight * targetRatio;
+                sourceX = (image.naturalWidth - sourceWidth) / 2;
+            }
+
+            else {
+                sourceHeight = image.naturalWidth / targetRatio;
+                sourceY = (image.naturalHeight - sourceHeight) / 2;
+            }
+
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+
+            context.drawImage(
+                image,
+                sourceX,
+                sourceY,
+                sourceWidth,
+                sourceHeight,
+                0,
+                0,
+                targetWidth,
+                targetHeight
+            );
+
+            let quality = 0.82;
+            let blob = await canvasToJpeg(canvas, quality);
+
+            while (blob.size > 350 * 1024 && quality > 0.58) {
+                quality -= 0.08;
+                blob = await canvasToJpeg(canvas, quality);
+            }
+
+            URL.revokeObjectURL(sourceUrl);
+            resolve(blob);
+        };
+
+        image.onerror = () => {
+            URL.revokeObjectURL(sourceUrl);
+            reject(new Error("Bildformat wird nicht unterstützt."));
+        };
+
+        image.src = sourceUrl;
+    });
+}
+
+
+function canvasToJpeg(canvas, quality) {
+    return new Promise((resolve, reject) => {
+        canvas.toBlob(
+            blob => {
+                if (blob) {
+                    resolve(blob);
+                }
+
+                else {
+                    reject(new Error("JPEG konnte nicht erstellt werden."));
+                }
+            },
+            "image/jpeg",
+            quality
+        );
+    });
+}
+
+
+function createImageFileName() {
+    const uniquePart = crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+    return `${uniquePart}.jpg`;
+}
+
+
+function formatFileSize(bytes) {
+    return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}
+
+
+function finishItemSave() {
+    saveItemButton.disabled = false;
+    saveItemButton.textContent = "Gegenstand speichern";
+}
+
+
+function showItemFormError(message) {
+    itemFormMessage.textContent = message;
+    itemFormMessage.classList.add("admin-error");
 }
 
 

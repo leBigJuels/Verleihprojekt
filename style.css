@@ -241,8 +241,8 @@ main {
    ========================================= */
 
 .image-cell img {
-    width: 100px;
-    height: 75px;
+    width: 128px;
+    height: 72px;
 
     object-fit: cover;
 
@@ -669,6 +669,73 @@ main {
 }
 
 
+.admin-item-form {
+    display: grid;
+
+    grid-template-columns: minmax(130px, 190px) minmax(0, 520px);
+
+    align-items: center;
+
+    gap: 14px 18px;
+}
+
+
+.admin-item-form label {
+    font-weight: bold;
+}
+
+
+.admin-item-form input,
+.admin-item-form textarea {
+    width: 100%;
+
+    padding: 11px 12px;
+
+    border: 1px solid #cccccc;
+
+    border-radius: 6px;
+
+    font: inherit;
+}
+
+
+.admin-item-form .admin-help,
+.admin-item-form .image-preview-container,
+.admin-item-form .submit-button,
+.admin-item-form .admin-message {
+    grid-column: 2;
+}
+
+
+.admin-help {
+    margin: 0;
+
+    color: #666;
+
+    font-size: 13px;
+}
+
+
+.image-preview-container {
+    max-width: 520px;
+}
+
+
+.image-preview-container img {
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+
+    display: block;
+
+    margin-bottom: 8px;
+}
+
+
 .admin-header-row {
     display: flex;
 
@@ -771,6 +838,19 @@ main {
     .secondary-button,
     .submit-button {
         width: 100%;
+    }
+
+
+    .admin-item-form {
+        grid-template-columns: 1fr;
+    }
+
+
+    .admin-item-form .admin-help,
+    .admin-item-form .image-preview-container,
+    .admin-item-form .submit-button,
+    .admin-item-form .admin-message {
+        grid-column: 1;
     }
 
 }

@@ -33,7 +33,6 @@
                 <input
                     id="admin-email"
                     type="email"
-                    value=":D"
                     autocomplete="username"
                     required
                 >
@@ -66,6 +65,50 @@
                 <button id="logout-button" class="secondary-button" type="button">
                     Abmelden
                 </button>
+            </div>
+
+
+            <div class="admin-card">
+                <h2>Gegenstand hinzufügen</h2>
+
+                <form id="item-form" class="admin-item-form">
+                    <label for="item-category">Kategorie</label>
+                    <input id="item-category" type="text" required>
+
+                    <label for="item-name">Name</label>
+                    <input id="item-name" type="text" required>
+
+                    <label for="item-designation">Genaue Bezeichnung</label>
+                    <input id="item-designation" type="text">
+
+                    <label for="item-note">Anmerkung</label>
+                    <textarea id="item-note" rows="3"></textarea>
+
+                    <label for="item-image">Bild</label>
+                    <input
+                        id="item-image"
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        required
+                    >
+
+                    <p class="admin-help">
+                        Auf dem Smartphone kannst du direkt die Kamera verwenden.
+                        Das Bild wird automatisch zugeschnitten und verkleinert.
+                    </p>
+
+                    <div id="image-preview-container" class="image-preview-container" hidden>
+                        <img id="image-preview" alt="Vorschau des ausgewählten Bildes">
+                        <p id="image-info" class="admin-help"></p>
+                    </div>
+
+                    <button id="save-item-button" class="submit-button" type="submit">
+                        Gegenstand speichern
+                    </button>
+
+                    <p id="item-form-message" class="admin-message"></p>
+                </form>
             </div>
 
 
