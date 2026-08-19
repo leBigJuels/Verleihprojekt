@@ -10,6 +10,8 @@
 body {
     margin: 0;
 
+    font-size: 15px;
+
     font-family:
         Arial,
         Helvetica,
@@ -37,7 +39,7 @@ body {
 .page-header h1 {
     margin: 0 0 10px 0;
 
-    font-size: 32px;
+    font-size: 30px;
 }
 
 
@@ -46,7 +48,7 @@ body {
 
     color: #666;
 
-    font-size: 16px;
+    font-size: 15px;
 }
 
 
@@ -106,7 +108,7 @@ main {
 .loan-table {
     width: 100%;
 
-    min-width: 1270px;
+    min-width: 1160px;
 
     border-collapse: collapse;
 
@@ -127,7 +129,7 @@ main {
 
     text-align: left;
 
-    font-size: 14px;
+    font-size: 13px;
 
     font-weight: bold;
 
@@ -213,7 +215,7 @@ main {
 
 .loan-table th:nth-child(6),
 .loan-table td:nth-child(6) {
-    width: 180px;
+    width: 85px;
 }
 
 
@@ -515,7 +517,7 @@ main {
     */
 
     .loan-table {
-        min-width: 1270px;
+        min-width: 1160px;
     }
 
 }
@@ -941,7 +943,9 @@ main {
 
 .approve-button,
 .reject-button,
-.return-button {
+.return-button,
+.edit-item-button,
+.delete-item-button {
     padding: 8px 11px;
 
     border: none;
@@ -962,6 +966,39 @@ main {
 
 .reject-button {
     background-color: #b91c1c;
+}
+
+
+.edit-item-button {
+    background-color: #2563eb;
+}
+
+
+.delete-item-button {
+    background-color: #b91c1c;
+}
+
+
+#edit-item-form {
+    margin-bottom: 24px;
+
+    padding-bottom: 24px;
+
+    border-bottom: 1px solid #e5e5e5;
+}
+
+
+.edit-item-actions {
+    display: flex;
+
+    grid-column: 2;
+
+    gap: 10px;
+}
+
+
+.item-management-table {
+    min-width: 700px;
 }
 
 
@@ -1037,6 +1074,13 @@ main {
     .admin-item-form .submit-button,
     .admin-item-form .admin-message {
         grid-column: 1;
+    }
+
+
+    .edit-item-actions {
+        grid-column: 1;
+
+        flex-direction: column;
     }
 
 }

@@ -69,68 +69,6 @@
 
 
             <div class="admin-card">
-                <h2>Gegenstand hinzufügen</h2>
-
-                <form id="item-form" class="admin-item-form">
-                    <label for="item-category">Kategorie</label>
-                    <select id="item-category">
-                        <option value="" selected>Keine Auswahl – Sonstigzeug</option>
-                        <option value="Werkzeug-Maschine">Werkzeug-Maschine</option>
-                        <option value="Werkzeug-Elektro">Werkzeug-Elektro</option>
-                        <option value="Werkzeug-Handzeug">Werkzeug-Handzeug</option>
-                        <option value="Werkzeug-Fahrrad">Werkzeug-Fahrrad</option>
-                        <option value="Nähzeug">Nähzeug</option>
-                        <option value="Küchenzeug">Küchenzeug</option>
-                        <option value="Campingzeug">Campingzeug</option>
-                        <option value="Spielzeug">Spielzeug</option>
-                        <option value="Sonstigzeug">Sonstigzeug</option>
-                    </select>
-
-                    <label for="item-name">Name</label>
-                    <input id="item-name" type="text" required>
-
-                    <label for="item-designation">Genaue Bezeichnung</label>
-                    <input id="item-designation" type="text">
-
-                    <label for="item-lending-preference">Verleihbereitschaft</label>
-                    <select id="item-lending-preference" required>
-                        <option value="very_happy">Sehrsehr gerne</option>
-                        <option value="happy" selected>Sehr gerne</option>
-                        <option value="discuss">Gerne, aber pls pass gut auf</option>
-                        <option value="exception">Musst du bei mir benutzen</option>
-                    </select>
-
-                    <label for="item-note">Anmerkung</label>
-                    <textarea id="item-note" rows="3"></textarea>
-
-                    <label for="item-image">Bild</label>
-                    <input
-                        id="item-image"
-                        type="file"
-                        accept="image/*"
-                        capture="environment"
-                    >
-
-                    <p class="admin-help">
-                        Optional. Auf dem Smartphone kannst du direkt die Kamera verwenden.
-                        Das Bild wird automatisch zugeschnitten und verkleinert.
-                    </p>
-
-                    <div id="image-preview-container" class="image-preview-container" hidden>
-                        <img id="image-preview" alt="Vorschau des ausgewählten Bildes">
-                        <p id="image-info" class="admin-help"></p>
-                    </div>
-
-                    <button id="save-item-button" class="submit-button" type="submit">
-                        Gegenstand speichern
-                    </button>
-
-                    <p id="item-form-message" class="admin-message"></p>
-                </form>
-            </div>
-
-
-            <div class="admin-card">
                 <h2>Offene Anfragen</h2>
 
                 <div class="admin-table-wrapper">
@@ -167,6 +105,121 @@
                         </thead>
 
                         <tbody id="approved-requests-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="admin-card">
+                <h2>Gegenstand hinzufügen</h2>
+
+                <form id="item-form" class="admin-item-form">
+                    <label for="item-category">Kategorie</label>
+                    <select id="item-category">
+                        <option value="" selected>Keine Auswahl – Sonstigzeug</option>
+                        <option value="Werkzeug-Maschine">Werkzeug-Maschine</option>
+                        <option value="Werkzeug-Elektro">Werkzeug-Elektro</option>
+                        <option value="Werkzeug-Handzeug">Werkzeug-Handzeug</option>
+                        <option value="Werkzeug-Fahrrad">Werkzeug-Fahrrad</option>
+                        <option value="Nähzeug">Nähzeug</option>
+                        <option value="Küchenzeug">Küchenzeug</option>
+                        <option value="Campingzeug">Campingzeug</option>
+                        <option value="Spielzeug">Spielzeug</option>
+                        <option value="Sonstigzeug">Sonstigzeug</option>
+                    </select>
+
+                    <label for="item-name">Name</label>
+                    <input id="item-name" type="text" required>
+
+                    <label for="item-designation">Genaue Bezeichnung</label>
+                    <input id="item-designation" type="text">
+
+                    <label for="item-lending-preference">Verleihbereitschaft</label>
+                    <select id="item-lending-preference" required>
+                        <option value="very_happy">Sehrsehr gerne</option>
+                        <option value="happy" selected>Sehr gerne</option>
+                        <option value="discuss">Gerne, aber pls pass gut auf</option>
+                        <option value="exception">Musst du bei mir benutzen</option>
+                    </select>
+
+                    <label for="item-note">Anmerkung</label>
+                    <textarea id="item-note" rows="3"></textarea>
+
+                    <label for="item-image">Bild</label>
+                    <input id="item-image" type="file" accept="image/*" capture="environment">
+
+                    <p class="admin-help">
+                        Optional. Auf dem Smartphone kannst du direkt die Kamera verwenden.
+                        Das Bild wird automatisch zugeschnitten und verkleinert.
+                    </p>
+
+                    <div id="image-preview-container" class="image-preview-container" hidden>
+                        <img id="image-preview" alt="Vorschau des ausgewählten Bildes">
+                        <p id="image-info" class="admin-help"></p>
+                    </div>
+
+                    <button id="save-item-button" class="submit-button" type="submit">
+                        Gegenstand speichern
+                    </button>
+
+                    <p id="item-form-message" class="admin-message"></p>
+                </form>
+            </div>
+
+
+            <div class="admin-card" id="manage-items-card">
+                <h2>Gegenstände bearbeiten</h2>
+
+                <form id="edit-item-form" class="admin-item-form" hidden>
+                    <label for="edit-item-category">Kategorie</label>
+                    <select id="edit-item-category">
+                        <option value="Werkzeug-Maschine">Werkzeug-Maschine</option>
+                        <option value="Werkzeug-Elektro">Werkzeug-Elektro</option>
+                        <option value="Werkzeug-Handzeug">Werkzeug-Handzeug</option>
+                        <option value="Werkzeug-Fahrrad">Werkzeug-Fahrrad</option>
+                        <option value="Nähzeug">Nähzeug</option>
+                        <option value="Küchenzeug">Küchenzeug</option>
+                        <option value="Campingzeug">Campingzeug</option>
+                        <option value="Spielzeug">Spielzeug</option>
+                        <option value="Sonstigzeug">Sonstigzeug</option>
+                    </select>
+
+                    <label for="edit-item-name">Name</label>
+                    <input id="edit-item-name" type="text" required>
+
+                    <label for="edit-item-designation">Genaue Bezeichnung</label>
+                    <input id="edit-item-designation" type="text">
+
+                    <label for="edit-item-lending-preference">Verleihbereitschaft</label>
+                    <select id="edit-item-lending-preference" required>
+                        <option value="very_happy">Sehrsehr gerne</option>
+                        <option value="happy">Sehr gerne</option>
+                        <option value="discuss">Gerne, aber pls pass gut auf</option>
+                        <option value="exception">Musst du bei mir benutzen</option>
+                    </select>
+
+                    <label for="edit-item-note">Anmerkung</label>
+                    <textarea id="edit-item-note" rows="3"></textarea>
+
+                    <div class="edit-item-actions">
+                        <button class="submit-button" type="submit">Änderungen speichern</button>
+                        <button id="cancel-edit-item" class="secondary-button" type="button">Abbrechen</button>
+                    </div>
+
+                    <p id="edit-item-message" class="admin-message"></p>
+                </form>
+
+                <div class="admin-table-wrapper">
+                    <table class="admin-table item-management-table">
+                        <thead>
+                            <tr>
+                                <th>Kategorie</th>
+                                <th>Gegenstand</th>
+                                <th>Status</th>
+                                <th>Aktion</th>
+                            </tr>
+                        </thead>
+                        <tbody id="items-management-body"></tbody>
                     </table>
                 </div>
             </div>

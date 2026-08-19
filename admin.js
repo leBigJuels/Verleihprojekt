@@ -54,9 +54,36 @@ const imageInfo = document.getElementById("image-info");
 const saveItemButton = document.getElementById("save-item-button");
 const itemFormMessage = document.getElementById("item-form-message");
 
+const itemsManagementBody =
+    document.getElementById("items-management-body");
+
+const editItemForm = document.getElementById("edit-item-form");
+const editItemCategoryInput = document.getElementById("edit-item-category");
+const editItemNameInput = document.getElementById("edit-item-name");
+const editItemDesignationInput = document.getElementById("edit-item-designation");
+const editItemLendingPreferenceInput =
+    document.getElementById("edit-item-lending-preference");
+const editItemNoteInput = document.getElementById("edit-item-note");
+const editItemMessage = document.getElementById("edit-item-message");
+const cancelEditItemButton = document.getElementById("cancel-edit-item");
+
 
 let preparedImage = null;
 let previewUrl = null;
+let selectedEditItemId = null;
+let editableItems = new Map();
+
+const CATEGORY_ORDER = [
+    "Werkzeug-Maschine",
+    "Werkzeug-Elektro",
+    "Werkzeug-Handzeug",
+    "Werkzeug-Fahrrad",
+    "Nähzeug",
+    "Küchenzeug",
+    "Campingzeug",
+    "Spielzeug",
+    "Sonstigzeug"
+];
 
 
 // =========================================
@@ -118,7 +145,10 @@ async function showDashboard(user) {
 
     adminUser.textContent = `Angemeldet als ${user.email}`;
 
-    await loadRequests();
+    await Promise.all([
+        loadRequests(),
+        loadAdminItems()
+    ]);
 }
 
 
@@ -260,6 +290,229 @@ function createActionButton(label, className, status, requestId) {
 
 
 // =========================================
+// Gegenstände verwalten
+// =========================================
+
+async function loadAdminItems() {
+    const { data: items, error } = await supabaseClient
+        .from("items")
+        .select("*");
+
+    if (error) {
+        itemsManagementBody.innerHTML = `
+            <tr><td colspan="4">Gegenstände konnten nicht geladen werden.</td></tr>
+        `;
+        return;
+    }
+
+    const sortedItems = [...items].sort((firstItem, secondItem) => {
+        const firstOrder = CATEGORY_ORDER.indexOf(firstItem.category);
+        const secondOrder = CATEGORY_ORDER.indexOf(secondItem.category);
+
+        const safeFirstOrder = firstOrder === -1
+            ? CATEGORY_ORDER.length
+            : firstOrder;
+
+        const safeSecondOrder = secondOrder === -1
+            ? CATEGORY_ORDER.length
+            : secondOrder;
+
+        if (safeFirstOrder !== safeSecondOrder) {
+            return safeFirstOrder - safeSecondOrder;
+        }
+
+        return (firstItem.name ?? "").localeCompare(
+            secondItem.name ?? "",
+            "de"
+        );
+    });
+
+    editableItems = new Map(
+        sortedItems.map(item => [String(item.id), item])
+    );
+
+    renderAdminItems(sortedItems);
+}
+
+
+function renderAdminItems(items) {
+    itemsManagementBody.innerHTML = "";
+
+    if (items.length === 0) {
+        itemsManagementBody.innerHTML = `
+            <tr><td colspan="4">Keine Gegenstände vorhanden.</td></tr>
+        `;
+        return;
+    }
+
+    items.forEach(item => {
+        const row = document.createElement("tr");
+
+        appendTextCell(row, item.category ?? "Sonstigzeug");
+        appendTextCell(row, item.name);
+        appendTextCell(row, getStatusLabel(item.status));
+
+        const actionsCell = document.createElement("td");
+        const actions = document.createElement("div");
+        const editButton = document.createElement("button");
+        const deleteButton = document.createElement("button");
+
+        actions.classList.add("admin-actions");
+
+        editButton.type = "button";
+        editButton.textContent = "Bearbeiten";
+        editButton.classList.add("edit-item-button");
+        editButton.dataset.editItemId = item.id;
+
+        deleteButton.type = "button";
+        deleteButton.textContent = "Löschen";
+        deleteButton.classList.add("delete-item-button");
+        deleteButton.dataset.deleteItemId = item.id;
+
+        actions.append(editButton, deleteButton);
+        actionsCell.appendChild(actions);
+        row.appendChild(actionsCell);
+        itemsManagementBody.appendChild(row);
+    });
+}
+
+
+function getStatusLabel(status) {
+    const labels = {
+        available: "Verfügbar",
+        reserved: "Reserviert",
+        loaned: "Verliehen"
+    };
+
+    return labels[status] ?? status ?? "Unbekannt";
+}
+
+
+function openItemEditor(item) {
+    selectedEditItemId = item.id;
+    editItemCategoryInput.value = CATEGORY_ORDER.includes(item.category)
+        ? item.category
+        : "Sonstigzeug";
+    editItemNameInput.value = item.name ?? "";
+    editItemDesignationInput.value = item.designation ?? "";
+    editItemLendingPreferenceInput.value = item.lending_preference ?? "happy";
+    editItemNoteInput.value = item.note ?? "";
+    editItemMessage.textContent = "";
+    editItemForm.hidden = false;
+    editItemForm.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+
+function closeItemEditor() {
+    selectedEditItemId = null;
+    editItemForm.reset();
+    editItemForm.hidden = true;
+    editItemMessage.textContent = "";
+    editItemMessage.classList.remove("admin-error");
+}
+
+
+itemsManagementBody.addEventListener("click", async event => {
+    const editButton = event.target.closest("[data-edit-item-id]");
+    const deleteButton = event.target.closest("[data-delete-item-id]");
+
+    if (editButton) {
+        const item = editableItems.get(editButton.dataset.editItemId);
+
+        if (item) {
+            openItemEditor(item);
+        }
+
+        return;
+    }
+
+    if (!deleteButton) {
+        return;
+    }
+
+    const item = editableItems.get(deleteButton.dataset.deleteItemId);
+
+    if (!item || !window.confirm(`„${item.name}“ wirklich löschen?`)) {
+        return;
+    }
+
+    deleteButton.disabled = true;
+
+    const { error } = await supabaseClient
+        .from("items")
+        .delete()
+        .eq("id", item.id);
+
+    if (error) {
+        dashboardMessage.textContent =
+            `Gegenstand konnte nicht gelöscht werden: ${error.message}`;
+        dashboardMessage.classList.add("admin-error");
+        deleteButton.disabled = false;
+        return;
+    }
+
+    if (item.image_url) {
+        const pathMarker = "/storage/v1/object/public/item-images/";
+        const imagePath = item.image_url.split(pathMarker)[1];
+
+        if (imagePath) {
+            await supabaseClient.storage
+                .from(IMAGE_BUCKET)
+                .remove([decodeURIComponent(imagePath)]);
+        }
+    }
+
+    closeItemEditor();
+    dashboardMessage.textContent = "Gegenstand wurde gelöscht.";
+    dashboardMessage.classList.remove("admin-error");
+    await loadAdminItems();
+});
+
+
+editItemForm.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (selectedEditItemId === null) {
+        return;
+    }
+
+    const submitButton = editItemForm.querySelector('[type="submit"]');
+
+    submitButton.disabled = true;
+    editItemMessage.textContent = "Änderungen werden gespeichert ...";
+    editItemMessage.classList.remove("admin-error");
+
+    const { error } = await supabaseClient
+        .from("items")
+        .update({
+            category: editItemCategoryInput.value,
+            name: editItemNameInput.value.trim(),
+            designation: editItemDesignationInput.value.trim() || null,
+            lending_preference: editItemLendingPreferenceInput.value,
+            note: editItemNoteInput.value.trim() || null
+        })
+        .eq("id", selectedEditItemId);
+
+    submitButton.disabled = false;
+
+    if (error) {
+        editItemMessage.textContent =
+            `Änderungen konnten nicht gespeichert werden: ${error.message}`;
+        editItemMessage.classList.add("admin-error");
+        return;
+    }
+
+    closeItemEditor();
+    dashboardMessage.textContent = "Gegenstand wurde aktualisiert.";
+    dashboardMessage.classList.remove("admin-error");
+    await loadAdminItems();
+});
+
+
+cancelEditItemButton.addEventListener("click", closeItemEditor);
+
+
+// =========================================
 // Bild vorbereiten und Gegenstand anlegen
 // =========================================
 
@@ -381,6 +634,7 @@ itemForm.addEventListener("submit", async event => {
 
     finishItemSave();
     itemFormMessage.textContent = "Gegenstand wurde erfolgreich hinzugefügt.";
+    await loadAdminItems();
 });
 
 
