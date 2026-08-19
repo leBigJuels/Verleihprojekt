@@ -72,7 +72,7 @@ async function loadItems() {
 
         itemsBody.innerHTML = `
             <tr>
-                <td colspan="7">
+                <td colspan="8">
                     Gegenstände konnten nicht geladen werden.
                 </td>
             </tr>
@@ -110,7 +110,7 @@ function renderItems(items) {
 
         itemsBody.innerHTML = `
             <tr>
-                <td colspan="7">
+                <td colspan="8">
                     Aktuell sind keine Gegenstände eingetragen.
                 </td>
             </tr>
@@ -259,7 +259,54 @@ function renderItems(items) {
 
 
         // =================================
-        // 6. Ausleihbutton
+        // 6. Verleihbereitschaft
+        // =================================
+
+        const lendingPreferenceCell =
+            document.createElement("td");
+
+        const lendingPreferenceBadge =
+            document.createElement("span");
+
+        const lendingPreferences = {
+            very_happy: {
+                text: "Sehr gerne",
+                className: "very-happy"
+            },
+            happy: {
+                text: "Gerne",
+                className: "happy"
+            },
+            discuss: {
+                text: "Nach Absprache",
+                className: "discuss"
+            },
+            exception: {
+                text: "Nur in Ausnahmefällen",
+                className: "exception"
+            }
+        };
+
+        const lendingPreference =
+            lendingPreferences[item.lending_preference]
+            ?? lendingPreferences.happy;
+
+        lendingPreferenceBadge.className =
+            `lending-preference ${lendingPreference.className}`;
+
+        lendingPreferenceBadge.textContent =
+            lendingPreference.text;
+
+        lendingPreferenceCell.appendChild(
+            lendingPreferenceBadge
+        );
+
+        row.appendChild(lendingPreferenceCell);
+
+
+
+        // =================================
+        // 7. Ausleihbutton
         // =================================
 
         const buttonCell =
@@ -306,7 +353,7 @@ function renderItems(items) {
 
 
         // =================================
-        // 7. Anmerkung
+        // 8. Anmerkung
         // =================================
 
         const noteCell =

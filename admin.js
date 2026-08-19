@@ -42,6 +42,7 @@ const itemForm = document.getElementById("item-form");
 const itemCategoryInput = document.getElementById("item-category");
 const itemNameInput = document.getElementById("item-name");
 const itemDesignationInput = document.getElementById("item-designation");
+const itemLendingPreferenceInput = document.getElementById("item-lending-preference");
 const itemNoteInput = document.getElementById("item-note");
 const itemImageInput = document.getElementById("item-image");
 
@@ -348,6 +349,7 @@ itemForm.addEventListener("submit", async event => {
             name: itemNameInput.value.trim(),
             image_url: publicUrlData.publicUrl,
             designation: itemDesignationInput.value.trim() || null,
+            lending_preference: itemLendingPreferenceInput.value,
             status: "available",
             note: itemNoteInput.value.trim() || null,
             created_at: new Date().toISOString()
