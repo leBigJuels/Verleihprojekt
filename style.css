@@ -127,7 +127,7 @@ main {
 .loan-table {
     width: 100%;
 
-    min-width: 1160px;
+    min-width: 1100px;
 
     border-collapse: collapse;
 
@@ -144,7 +144,7 @@ main {
 
 
 .loan-table th {
-    padding: 14px 16px;
+    padding: 14px 10px;
 
     text-align: left;
 
@@ -160,7 +160,7 @@ main {
 /* Tabellenzellen */
 
 .loan-table td {
-    padding: 14px 16px;
+    padding: 14px 10px;
 
     vertical-align: middle;
 
@@ -194,7 +194,7 @@ main {
 
 .loan-table th:nth-child(1),
 .loan-table td:nth-child(1) {
-    width: 120px;
+    width: 95px;
 }
 
 
@@ -202,7 +202,7 @@ main {
 
 .loan-table th:nth-child(2),
 .loan-table td:nth-child(2) {
-    width: 160px;
+    width: 145px;
 }
 
 
@@ -210,7 +210,7 @@ main {
 
 .loan-table th:nth-child(3),
 .loan-table td:nth-child(3) {
-    width: 130px;
+    width: 148px;
 }
 
 
@@ -218,7 +218,7 @@ main {
 
 .loan-table th:nth-child(4),
 .loan-table td:nth-child(4) {
-    width: 220px;
+    width: 190px;
 }
 
 
@@ -226,7 +226,7 @@ main {
 
 .loan-table th:nth-child(5),
 .loan-table td:nth-child(5) {
-    width: 130px;
+    width: 115px;
 }
 
 
@@ -234,7 +234,7 @@ main {
 
 .loan-table th:nth-child(6),
 .loan-table td:nth-child(6) {
-    width: 85px;
+    width: 75px;
 
     text-align: center;
 }
@@ -244,7 +244,7 @@ main {
 
 .loan-table th:nth-child(7),
 .loan-table td:nth-child(7) {
-    width: 150px;
+    width: 135px;
 }
 
 
@@ -252,7 +252,7 @@ main {
 
 .loan-table th:nth-child(8),
 .loan-table td:nth-child(8) {
-    min-width: 220px;
+    min-width: 190px;
 }
 
 
@@ -538,7 +538,7 @@ main {
     */
 
     .loan-table {
-        min-width: 1160px;
+        min-width: 1100px;
     }
 
 }

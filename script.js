@@ -212,6 +212,19 @@ function renderItems(items) {
             );
         }
 
+        else if ([
+            "Campingzeug",
+            "Spielzeug",
+            "Sonstigzeug",
+            "Küchenzeug"
+        ].includes(category)) {
+            categoryCell.append(
+                category.slice(0, -4),
+                document.createElement("br"),
+                "-zeug"
+            );
+        }
+
         else {
             categoryCell.textContent = category;
         }
