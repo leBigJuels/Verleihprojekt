@@ -69,6 +69,28 @@
 
 
             <div class="admin-card">
+                <h2>Druckaufträge</h2>
+
+                <div class="admin-table-wrapper">
+                    <table class="admin-table print-requests-table">
+                        <thead>
+                            <tr>
+                                <th>Auftrag</th>
+                                <th>Filament</th>
+                                <th>Projekt</th>
+                                <th>Dateien</th>
+                                <th>Zeitpunkt</th>
+                                <th>Status / Aktion</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="print-requests-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="admin-card">
                 <h2>Offene Anfragen</h2>
 
                 <div class="admin-table-wrapper">
@@ -145,6 +167,12 @@
                     <label for="item-note">Anmerkung</label>
                     <textarea id="item-note" rows="3"></textarea>
 
+                    <label for="item-supports-print-requests">Druckaufträge</label>
+                    <label class="admin-checkbox-label">
+                        <input id="item-supports-print-requests" type="checkbox">
+                        Statt Ausleihe einen Druckauftrag anbieten
+                    </label>
+
                     <label for="item-image">Bild</label>
                     <input id="item-image" type="file" accept="image/*" capture="environment">
 
@@ -200,6 +228,12 @@
 
                     <label for="edit-item-note">Anmerkung</label>
                     <textarea id="edit-item-note" rows="3"></textarea>
+
+                    <label for="edit-item-supports-print-requests">Druckaufträge</label>
+                    <label class="admin-checkbox-label">
+                        <input id="edit-item-supports-print-requests" type="checkbox">
+                        Statt Ausleihe einen Druckauftrag anbieten
+                    </label>
 
                     <label for="edit-item-image">Bild ersetzen/hinzufügen</label>
                     <input

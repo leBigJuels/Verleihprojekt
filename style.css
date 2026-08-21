@@ -474,7 +474,7 @@ main {
 
     border-radius: 6px;
 
-    background-color: #2563eb;
+    background-color: #15803d;
 
     color: white;
 
@@ -487,7 +487,7 @@ main {
 
 
 .request-button:hover {
-    background-color: #1d4ed8;
+    background-color: #166534;
 }
 
 
@@ -507,6 +507,136 @@ main {
     cursor: not-allowed;
 
     transform: none;
+}
+
+
+.print-request-button {
+    background-color: #2563eb;
+}
+
+
+.print-request-button:hover {
+    background-color: #1d4ed8;
+}
+
+
+/* =========================================
+   Öffentlicher Druckauftrag
+   ========================================= */
+
+.print-request-container {
+    width: min(760px, calc(100% - 30px));
+
+    margin: 30px auto;
+
+    padding: 0;
+}
+
+
+.print-request-card {
+    padding: 25px;
+
+    border-radius: 10px;
+
+    background-color: #ffffff;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+
+.print-request-card h2 {
+    margin-top: 0;
+}
+
+
+.print-upload-notice {
+    padding: 12px 14px;
+
+    border-left: 4px solid #2563eb;
+
+    background-color: #eff6ff;
+}
+
+
+.print-request-form {
+    display: grid;
+
+    grid-template-columns: minmax(140px, 190px) minmax(0, 1fr);
+
+    align-items: center;
+
+    gap: 14px 18px;
+
+    margin-top: 24px;
+}
+
+
+.print-request-form label {
+    font-weight: bold;
+}
+
+
+.print-request-form input,
+.print-request-form textarea {
+    width: 100%;
+
+    padding: 11px 12px;
+
+    border: 1px solid #cccccc;
+
+    border-radius: 6px;
+
+    font: inherit;
+}
+
+
+.print-request-form textarea {
+    resize: vertical;
+}
+
+
+.print-file-summary,
+.print-upload-progress,
+.print-request-form .submit-button,
+.print-request-form .admin-message {
+    grid-column: 2;
+}
+
+
+.print-file-summary {
+    color: #666666;
+
+    font-size: 13px;
+
+    overflow-wrap: anywhere;
+}
+
+
+.print-upload-progress {
+    height: 12px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background-color: #dbe3ee;
+}
+
+
+.print-upload-progress-bar {
+    width: 0;
+    height: 100%;
+
+    background-color: #2563eb;
+
+    transition: width 150ms ease;
+}
+
+
+.print-success {
+    color: #166534;
+
+    font-weight: bold;
 }
 
 
@@ -886,6 +1016,24 @@ main {
 }
 
 
+.admin-item-form .admin-checkbox-label {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    font-weight: normal;
+}
+
+
+.admin-item-form .admin-checkbox-label input {
+    width: auto;
+
+    margin: 0;
+}
+
+
 .admin-item-form .admin-help,
 .admin-item-form .image-preview-container,
 .admin-item-form .submit-button,
@@ -967,6 +1115,8 @@ main {
 .approve-button,
 .reject-button,
 .return-button,
+.print-status-button,
+.print-download-button,
 .edit-item-button,
 .delete-item-button {
     padding: 8px 11px;
@@ -999,6 +1149,41 @@ main {
 
 .delete-item-button {
     background-color: #b91c1c;
+}
+
+
+.print-status-button {
+    background-color: #2563eb;
+}
+
+
+.print-download-button {
+    max-width: 230px;
+
+    background-color: #475569;
+
+    text-align: left;
+
+    overflow-wrap: anywhere;
+}
+
+
+.print-requests-table {
+    min-width: 1150px;
+}
+
+
+.print-files-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+
+.print-request-actions {
+    margin-top: 7px;
 }
 
 
@@ -1134,6 +1319,29 @@ main {
         grid-column: 1;
 
         flex-direction: column;
+    }
+
+
+    .print-request-container {
+        margin: 15px auto;
+    }
+
+
+    .print-request-card {
+        padding: 20px 16px;
+    }
+
+
+    .print-request-form {
+        grid-template-columns: 1fr;
+    }
+
+
+    .print-file-summary,
+    .print-upload-progress,
+    .print-request-form .submit-button,
+    .print-request-form .admin-message {
+        grid-column: 1;
     }
 
 }

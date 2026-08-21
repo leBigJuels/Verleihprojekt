@@ -417,7 +417,21 @@ function renderItems(items) {
         );
 
 
-        if (item.status === "available") {
+        if (item.supports_print_requests) {
+
+            button.textContent =
+                "Druckauftrag";
+
+            button.classList.add(
+                "print-request-button"
+            );
+
+            button.dataset.printItemId =
+                item.id;
+
+        }
+
+        else if (item.status === "available") {
 
             button.textContent =
                 "Ausleihen";
@@ -505,6 +519,24 @@ itemsBody.addEventListener(
         // deaktivierte Buttons ignorieren
 
         if (button.disabled) {
+            return;
+        }
+
+
+        // Druckaufträge öffnen eine eigene öffentliche Seite.
+
+        if (button.dataset.printItemId) {
+            const target = new URL(
+                "print-request.html",
+                window.location.href
+            );
+
+            target.searchParams.set(
+                "item_id",
+                button.dataset.printItemId
+            );
+
+            window.location.href = target.href;
             return;
         }
 
@@ -687,7 +719,19 @@ requestForm.addEventListener(
 
 // =========================================
 // Beim Öffnen der Webseite
-// Gegenstände laden
+// anonyme Druckauftrag-Sitzung aufräumen
+// und Gegenstände laden
 // =========================================
 
-loadItems();
+async function initializePublicList() {
+    const { data } = await supabaseClient.auth.getSession();
+
+    if (data.session?.user?.is_anonymous) {
+        await supabaseClient.auth.signOut();
+    }
+
+    await loadItems();
+}
+
+
+initializePublicList();

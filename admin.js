@@ -35,6 +35,9 @@ const pendingRequestsBody =
 const approvedRequestsBody =
     document.getElementById("approved-requests-body");
 
+const printRequestsBody =
+    document.getElementById("print-requests-body");
+
 const dashboardMessage =
     document.getElementById("dashboard-message");
 
@@ -44,6 +47,8 @@ const itemNameInput = document.getElementById("item-name");
 const itemDesignationInput = document.getElementById("item-designation");
 const itemLendingPreferenceInput = document.getElementById("item-lending-preference");
 const itemNoteInput = document.getElementById("item-note");
+const itemSupportsPrintRequestsInput =
+    document.getElementById("item-supports-print-requests");
 const itemImageInput = document.getElementById("item-image");
 
 const imagePreviewContainer =
@@ -64,6 +69,8 @@ const editItemDesignationInput = document.getElementById("edit-item-designation"
 const editItemLendingPreferenceInput =
     document.getElementById("edit-item-lending-preference");
 const editItemNoteInput = document.getElementById("edit-item-note");
+const editItemSupportsPrintRequestsInput =
+    document.getElementById("edit-item-supports-print-requests");
 const editItemImageInput = document.getElementById("edit-item-image");
 const editImagePreviewContainer =
     document.getElementById("edit-image-preview-container");
@@ -154,9 +161,284 @@ async function showDashboard(user) {
 
     await Promise.all([
         loadRequests(),
-        loadAdminItems()
+        loadAdminItems(),
+        loadPrintRequests()
     ]);
 }
+
+
+// =========================================
+// Druckaufträge laden und anzeigen
+// =========================================
+
+async function loadPrintRequests() {
+    const [requestsResult, filesResult, itemsResult] = await Promise.all([
+        supabaseClient
+            .from("print_requests")
+            .select("*")
+            .neq("status", "uploading")
+            .order("created_at", { ascending: false }),
+
+        supabaseClient
+            .from("print_files")
+            .select("*"),
+
+        supabaseClient
+            .from("items")
+            .select("id, name")
+    ]);
+
+    if (requestsResult.error || filesResult.error || itemsResult.error) {
+        const error =
+            requestsResult.error ?? filesResult.error ?? itemsResult.error;
+
+        printRequestsBody.innerHTML = `
+            <tr><td colspan="6">Druckaufträge konnten nicht geladen werden.</td></tr>
+        `;
+
+        console.error("Fehler beim Laden der Druckaufträge:", error);
+        return;
+    }
+
+    const filesByRequestId = new Map();
+
+    filesResult.data.forEach(file => {
+        const requestId = String(file.print_request_id);
+        const requestFiles = filesByRequestId.get(requestId) ?? [];
+
+        requestFiles.push(file);
+        filesByRequestId.set(requestId, requestFiles);
+    });
+
+    const itemsById = new Map(
+        itemsResult.data.map(item => [String(item.id), item])
+    );
+
+    renderPrintRequests(
+        requestsResult.data,
+        filesByRequestId,
+        itemsById
+    );
+}
+
+
+function renderPrintRequests(requests, filesByRequestId, itemsById) {
+    printRequestsBody.innerHTML = "";
+
+    if (requests.length === 0) {
+        printRequestsBody.innerHTML = `
+            <tr><td colspan="6">Noch keine Druckaufträge vorhanden.</td></tr>
+        `;
+        return;
+    }
+
+    requests.forEach(request => {
+        const row = document.createElement("tr");
+        const item = itemsById.get(String(request.item_id));
+        const requestFiles = filesByRequestId.get(String(request.id)) ?? [];
+
+        const requestCell = document.createElement("td");
+        const requestName = document.createElement("strong");
+        const requestItem = document.createElement("span");
+
+        requestName.textContent = request.requester_name;
+        requestItem.textContent = item?.name ?? `Gegenstand ${request.item_id}`;
+        requestCell.append(requestName, document.createElement("br"), requestItem);
+        row.appendChild(requestCell);
+
+        appendTextCell(
+            row,
+            [request.filament_type, request.filament_color]
+                .filter(Boolean)
+                .join(" / ") || "–"
+        );
+
+        const projectCell = document.createElement("td");
+
+        if (request.project_url) {
+            const projectLink = document.createElement("a");
+
+            projectLink.href = request.project_url;
+            projectLink.target = "_blank";
+            projectLink.rel = "noopener noreferrer";
+            projectLink.textContent = "Projektlink";
+            projectCell.appendChild(projectLink);
+        }
+
+        if (request.note) {
+            if (projectCell.childNodes.length > 0) {
+                projectCell.appendChild(document.createElement("br"));
+            }
+
+            projectCell.appendChild(document.createTextNode(request.note));
+        }
+
+        if (projectCell.childNodes.length === 0) {
+            projectCell.textContent = "–";
+        }
+
+        row.appendChild(projectCell);
+
+        const filesCell = document.createElement("td");
+
+        if (requestFiles.length === 0) {
+            filesCell.textContent = "Keine Dateien";
+        }
+
+        else {
+            const filesList = document.createElement("div");
+
+            filesList.classList.add("print-files-list");
+
+            requestFiles.forEach(file => {
+                const downloadButton = document.createElement("button");
+
+                downloadButton.type = "button";
+                downloadButton.classList.add("print-download-button");
+                downloadButton.textContent =
+                    `${file.original_name} (${formatStorageFileSize(file.file_size)})`;
+                downloadButton.dataset.printFilePath = file.storage_path;
+                downloadButton.dataset.printFileName = file.original_name;
+                filesList.appendChild(downloadButton);
+            });
+
+            filesCell.appendChild(filesList);
+        }
+
+        row.appendChild(filesCell);
+        appendTextCell(row, formatDate(request.created_at));
+
+        const actionsCell = document.createElement("td");
+        const statusLabel = document.createElement("strong");
+        const actions = document.createElement("div");
+
+        statusLabel.textContent = getPrintStatusLabel(request.status);
+        actions.classList.add("admin-actions", "print-request-actions");
+
+        getNextPrintActions(request.status).forEach(action => {
+            const button = document.createElement("button");
+
+            button.type = "button";
+            button.textContent = action.label;
+            button.classList.add(action.className);
+            button.dataset.printRequestId = request.id;
+            button.dataset.printStatus = action.status;
+            actions.appendChild(button);
+        });
+
+        actionsCell.append(statusLabel);
+
+        if (actions.childNodes.length > 0) {
+            actionsCell.append(document.createElement("br"), actions);
+        }
+
+        row.appendChild(actionsCell);
+        printRequestsBody.appendChild(row);
+    });
+}
+
+
+function getPrintStatusLabel(status) {
+    const labels = {
+        pending: "Offen",
+        accepted: "Angenommen",
+        printing: "Wird gedruckt",
+        completed: "Fertig",
+        rejected: "Abgelehnt"
+    };
+
+    return labels[status] ?? status;
+}
+
+
+function getNextPrintActions(status) {
+    if (status === "pending") {
+        return [
+            { label: "Annehmen", status: "accepted", className: "approve-button" },
+            { label: "Ablehnen", status: "rejected", className: "reject-button" }
+        ];
+    }
+
+    if (status === "accepted") {
+        return [
+            { label: "Druck starten", status: "printing", className: "print-status-button" }
+        ];
+    }
+
+    if (status === "printing") {
+        return [
+            { label: "Fertig", status: "completed", className: "return-button" }
+        ];
+    }
+
+    return [];
+}
+
+
+function formatStorageFileSize(bytes) {
+    return `${(Number(bytes) / 1024 / 1024).toFixed(1)} MB`;
+}
+
+
+printRequestsBody.addEventListener("click", async event => {
+    const downloadButton = event.target.closest("[data-print-file-path]");
+    const statusButton = event.target.closest("[data-print-request-id]");
+
+    if (downloadButton) {
+        downloadButton.disabled = true;
+        dashboardMessage.textContent = "Druckdatei wird geladen ...";
+        dashboardMessage.classList.remove("admin-error");
+
+        const { data, error } = await supabaseClient.storage
+            .from("print-files")
+            .download(downloadButton.dataset.printFilePath);
+
+        downloadButton.disabled = false;
+
+        if (error) {
+            dashboardMessage.textContent =
+                `Datei konnte nicht geladen werden: ${error.message}`;
+            dashboardMessage.classList.add("admin-error");
+            return;
+        }
+
+        const objectUrl = URL.createObjectURL(data);
+        const link = document.createElement("a");
+
+        link.href = objectUrl;
+        link.download = downloadButton.dataset.printFileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(objectUrl);
+        dashboardMessage.textContent = "";
+        return;
+    }
+
+    if (!statusButton) {
+        return;
+    }
+
+    statusButton.disabled = true;
+    dashboardMessage.textContent = "Druckauftrag wird aktualisiert ...";
+    dashboardMessage.classList.remove("admin-error");
+
+    const { error } = await supabaseClient
+        .from("print_requests")
+        .update({ status: statusButton.dataset.printStatus })
+        .eq("id", statusButton.dataset.printRequestId);
+
+    if (error) {
+        dashboardMessage.textContent =
+            `Druckauftrag konnte nicht aktualisiert werden: ${error.message}`;
+        dashboardMessage.classList.add("admin-error");
+        statusButton.disabled = false;
+        return;
+    }
+
+    dashboardMessage.textContent = "Druckauftrag wurde aktualisiert.";
+    await loadPrintRequests();
+});
 
 
 // =========================================
@@ -452,6 +734,8 @@ function openItemEditor(item) {
     editItemDesignationInput.value = item.designation ?? "";
     editItemLendingPreferenceInput.value = item.lending_preference ?? "happy";
     editItemNoteInput.value = item.note ?? "";
+    editItemSupportsPrintRequestsInput.checked =
+        item.supports_print_requests === true;
     preparedEditImage = null;
 
     if (editPreviewUrl) {
@@ -600,6 +884,8 @@ editItemForm.addEventListener("submit", async event => {
             designation: editItemDesignationInput.value.trim() || null,
             lending_preference: editItemLendingPreferenceInput.value,
             note: editItemNoteInput.value.trim() || null,
+            supports_print_requests:
+                editItemSupportsPrintRequestsInput.checked,
             image_url: newImageUrl
         })
         .eq("id", selectedEditItemId);
@@ -770,6 +1056,8 @@ itemForm.addEventListener("submit", async event => {
             image_url: imageUrl,
             designation: itemDesignationInput.value.trim() || null,
             lending_preference: itemLendingPreferenceInput.value,
+            supports_print_requests:
+                itemSupportsPrintRequestsInput.checked,
             status: "available",
             note: itemNoteInput.value.trim() || null,
             created_at: new Date().toISOString()

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Druckauftrag – Verleihliste</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="page-header">
+        <h1>Druckauftrag</h1>
+        <a href="index.html">Zurück zur Verleihliste</a>
+    </header>
+
+
+    <main class="print-request-container">
+
+        <section class="print-request-card">
+            <h2>Druckfiles und Infos</h2>
+
+            <p class="print-upload-notice">
+                Du kannst bis zu 5 <strong>  .stl </strong> oder <strong> .3mf </strong> Dateien hochladen.
+                Maximal 20 MB pro Datei und maximal 45 MB insgesamt.
+            </p>
+
+            <p class="print-upload-notice">
+                Falls das Dateilimit nicht reicht, lass das Dateifeld leer und schreib mir stattdessen einen Downloadlink 
+                (z.B. GoogleDrive, Dropbox,..) mit den Files ins Anmerkungsfeld <br> oder <br> falls du das Modell auf einer Plattform wie printables.com oder thingiverse.com gefunden hast, kannst du mir auch einfach den Link zum Projekt ins Projektlinkfeld geben.
+            </p>
+
+            <form id="print-request-form" class="print-request-form">
+                <label for="print-requester-name">Name *</label>
+                <input
+                    id="print-requester-name"
+                    type="text"
+                    required
+                    autocomplete="name"
+                    maxlength="120"
+                    placeholder="Dein Name damit ichs zuordnen kann:P"
+                >
+
+                <label for="print-filament-color">Filamentfarbe</label>
+                <input
+                    id="print-filament-color"
+                    type="text"
+                    maxlength="120"
+                    placeholder="Optional (z.B. weiß, weiß matt, grau, etc.)"
+                >
+
+                <label for="print-filament-type">Filamentart</label>
+                <input
+                    id="print-filament-type"
+                    type="text"
+                    maxlength="120"
+                    placeholder="Optional (z. B. PLA, oder PETG)"
+                >
+
+                <label for="print-project-url">Projektlink</label>
+                <input
+                    id="print-project-url"
+                    type="url"
+                    placeholder="Optional (z.B. link von printables.com, thingiverse.com, etc.)"
+                >
+
+                <label for="print-files">STL-/3MF-Dateien</label>
+                <input
+                    id="print-files"
+                    type="file"
+                    accept=".stl,.3mf,model/stl,model/3mf"
+                    multiple
+                >
+
+                <div id="print-file-summary" class="print-file-summary">
+                    Noch keine Dateien ausgewählt.
+                </div>
+
+                <label for="print-note">Anmerkungen</label>
+                <textarea
+                    id="print-note"
+                    rows="6"
+                    placeholder="Optional (z.B. Anpassungen, Qualität, Stückzahl, Downloadlink für Dateien die sizelimits überschreiten etc.)"
+                ></textarea>
+
+                <div id="print-upload-progress" class="print-upload-progress" hidden>
+                    <div id="print-upload-progress-bar" class="print-upload-progress-bar"></div>
+                </div>
+
+                <button id="print-submit-button" class="submit-button" type="submit">
+                    Druckauftrag senden
+                </button>
+
+                <p id="print-form-message" class="admin-message" aria-live="polite"></p>
+            </form>
+
+          
+
+
+            <p class="print-upload-notice">
+                Falls es nicht offensichtlich ist, schreib gerne in die Anmerkungen wofür das Modell gedacht ist, dann kann ich 
+                Druckeinstellungen etc. besser anpassen:) 
+            </p>
+
+            <p class="print-upload-notice">
+                Kleinere Drucke gehen auf meinen Nacken, bei speziellen Farben/Filamenten die ich 
+                bestellen müsste oder großen Modellen, hätte ich gerne die Materialkosten erstattet &lt;3
+            </p>
+
+
+
+        </section>
+
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/dist/tus.min.js"></script>
+    <script src="print-request.js"></script>
+
+</body>
+
+</html>

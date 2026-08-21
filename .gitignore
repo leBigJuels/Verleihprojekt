@@ -1,3 +1,6 @@
 .DS_Store
 supabase-*-setup.sql
 agents.md
+PRINT_SETUP.md
+supabase/functions/send-print-request-email/index.ts
+PRINT_SETUP.md
