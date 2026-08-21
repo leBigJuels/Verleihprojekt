@@ -354,7 +354,7 @@ printRequestForm.addEventListener("submit", async event => {
         renderFileSummary([]);
         uploadProgressBar.style.width = "100%";
         formMessage.textContent =
-            "Dein Druckauftrag wurde gesendet. Ich habe eine Benachrichtigung erhalten.";
+            "Dein Druckauftrag wurde an mich gesendet:) ";
         formMessage.classList.add("print-success");
 
         if (session.user.is_anonymous) {
