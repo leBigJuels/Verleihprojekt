@@ -88,6 +88,7 @@ let preparedEditImage = null;
 let editPreviewUrl = null;
 
 const CATEGORY_ORDER = [
+    "3D-Druck",
     "Werkzeug-Maschine",
     "Werkzeug-Elektro",
     "Werkzeug-Handzeug",

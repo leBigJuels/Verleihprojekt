@@ -51,6 +51,7 @@ let selectedItemName = null;
 
 
 const CATEGORY_ORDER = [
+    "3D-Druck",
     "Werkzeug-Maschine",
     "Werkzeug-Elektro",
     "Werkzeug-Handzeug",
